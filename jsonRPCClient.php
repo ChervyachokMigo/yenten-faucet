@@ -239,3 +239,5 @@ function find ($string, $array = array ())
 	}
 	return $array;
 }
+
+?>
