@@ -181,7 +181,7 @@ $(window).load(function () {
 <div class="row">
 <div class="col-md-6 col-md-offset-3" style="margin-top: 30px; ">
 
-<h4 align="center"><a href="https://ytn.ccore.online/address/ye2ndkfp53wv6zg5gpnucrdkpdicenbey9" placeholder="Пополнить"><a id="wallettext">
+<h4 align="center"><a href="https://ytn.ccore.online/address/ye2ndkfp53wv6zg5gpnucrdkpdicenbey9" placeholder="Пополнить">
     <?php 
       $balance = 0;
       try {
