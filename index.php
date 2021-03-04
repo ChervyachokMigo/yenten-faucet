@@ -84,54 +84,54 @@ $alt = new jsonRPCClient($GLOBALS["RPC_URL"]);
 <span class="icon-bar"></span>
 <span class="icon-bar"></span>
 </button>
-<a class="navbar-brand" href="#">Двач кран енотов</a>
+<a class="navbar-brand" href="http://2ch-yenten-faucet.ml/#">Двач кран енотов</a>
 </div>
 <div class="navbar-collapse collapse">
 <ul class="nav navbar-nav">
 <li class="dropdown">
-<a href="#" class="dropdown-toggle" data-toggle="dropdown">мой мир<b class="caret"></b></a>
+<a href="http://2ch-yenten-faucet.ml/#" class="dropdown-toggle" data-toggle="dropdown">мой мир<b class="caret"></b></a>
 <ul class="dropdown-menu">
-<li><a href="">огромен</a></li>
+<li><a href="http://2ch-yenten-faucet.ml/#">огромен</a></li>
 </ul>
 </li>
 <li class="dropdown">
-<a href="#" class="dropdown-toggle" data-toggle="dropdown">а я<b class="caret"></b></a>
+<a href="http://2ch-yenten-faucet.ml/#" class="dropdown-toggle" data-toggle="dropdown">а я<b class="caret"></b></a>
 <ul class="dropdown-menu">
-<li><a href="">так скромен</a></li>
-<li><a href="">вся жизнь спекталь</a></li>
-<li><a href="">я в ней актер</a></li>
+<li><a href="http://2ch-yenten-faucet.ml/#">так скромен</a></li>
+<li><a href="http://2ch-yenten-faucet.ml/#">вся жизнь спекталь</a></li>
+<li><a href="http://2ch-yenten-faucet.ml/#">я в ней актер</a></li>
 </ul>
 </li>
 <li class="dropdown">
-<a href="#" class="dropdown-toggle" data-toggle="dropdown">актер лицедей<b class="caret"></b></a>
+<a href="http://2ch-yenten-faucet.ml/#" class="dropdown-toggle" data-toggle="dropdown">актер лицедей<b class="caret"></b></a>
 <ul class="dropdown-menu">
-<li><a href="">добряк и злодей</a></li>
-<li><a href="">не ради людей</a></li>
-<li><a href=""><b>а ради искусства!</b></a></li>
+<li><a href="http://2ch-yenten-faucet.ml/#">добряк и злодей</a></li>
+<li><a href="http://2ch-yenten-faucet.ml/#">не ради людей</a></li>
+<li><a href="http://2ch-yenten-faucet.ml/#"><b>а ради искусства!</b></a></li>
 </ul>
 </li>
 <li class="dropdown">
-<a href="#" class="dropdown-toggle" data-toggle="dropdown">по жизни<b class="caret"></b></a>
+<a href="http://2ch-yenten-faucet.ml/#" class="dropdown-toggle" data-toggle="dropdown">по жизни<b class="caret"></b></a>
 <ul class="dropdown-menu">
-<li><a href="">играю</a></li>
-<li><a href="">я все секреты</a></li>
-<li><a href="">ваши знаю</a></li>
+<li><a href="http://2ch-yenten-faucet.ml/#">играю</a></li>
+<li><a href="http://2ch-yenten-faucet.ml/#">я все секреты</a></li>
+<li><a href="http://2ch-yenten-faucet.ml/#">ваши знаю</a></li>
 </ul>
 </li>
 <li class="dropdown">
-<a href="#" class="dropdown-toggle" data-toggle="dropdown">вы в зале<b class="caret"></b></a>
+<a href="http://2ch-yenten-faucet.ml/#" class="dropdown-toggle" data-toggle="dropdown">вы в зале<b class="caret"></b></a>
 <ul class="dropdown-menu">
-<li><a href="">сидите</a></li>
-<li><a href="">и ваши нервы</a></li>
-<li><a href="">словно нити</a></li>
+<li><a href="http://2ch-yenten-faucet.ml/#">сидите</a></li>
+<li><a href="http://2ch-yenten-faucet.ml/#">и ваши нервы</a></li>
+<li><a href="http://2ch-yenten-faucet.ml/#">словно нити</a></li>
 </ul>
 </li>
 <li class="dropdown">
-<a href="#" class="dropdown-toggle" data-toggle="dropdown">надежно<b class="caret"></b></a>
+<a href="http://2ch-yenten-faucet.ml/#" class="dropdown-toggle" data-toggle="dropdown">надежно<b class="caret"></b></a>
 <ul class="dropdown-menu">
-<li><a href="">пришиты</a></li>
-<li><a href="">к пальцам</a></li>
-<li><a href="">моим!</a></li>
+<li><a href="http://2ch-yenten-faucet.ml/#">пришиты</a></li>
+<li><a href="http://2ch-yenten-faucet.ml/#">к пальцам</a></li>
+<li><a href="http://2ch-yenten-faucet.ml/#">моим!</a></li>
 </ul>
 </li>
 
