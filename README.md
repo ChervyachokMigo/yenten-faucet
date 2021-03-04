@@ -1,5 +1,5 @@
-# yenten-faucet
-## 2ch Yenten coin faucet
+# Двач кран енотов
+## 2ch Yenten-coin faucet
 
 
 * server_config.php - все настрйоки объеденены в один файл.
