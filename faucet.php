@@ -43,10 +43,14 @@
         }*/
       $min = $GLOBALS["PAYOUT_MIN"];
       $max = $GLOBALS["PAYOUT_MAX"];
-      $multi = (rand(50, 100) / 100) * 10;
-      $amount = rand($min,$max)*$multi;
-      $amount_max = $GLOBALS["PAYOUT_MAX"]*10;
+      $multi_min = $GLOBALS["PAYOUT_MULTICAST_MIN"];
+      $multi_max = $GLOBALS["PAYOUT_MULTICAST_MAX"];
+
+      $multi = ( rand( $multi_min*10, $multi_min*10 ) / 100) * 10;
+      $amount = rand( $min, $max ) * $multi;
+      $amount_max = $max * $multi_max;
       $amount=$amount/$GLOBALS["PAYOUT_AMOUNT_MULTIPLIER"];
+
       		$username = $_POST['address'];
       		$check = $alt->validateaddress($username);
 
@@ -64,8 +68,8 @@
                 $alt->sendtoaddress($username, $amount);
 
       					$data['success'] = true;
-                $chance = ($amount/$amount_max)*$GLOBALS["PAYOUT_AMOUNT_MULTIPLIER"]*100;
-      					$data['boa'] = "Вы получили " . $amount . " енотов!<br>Мультикаст: ".$multi."x<br>Эффективность: ".$chance."%";
+                $chance = round( ($amount/$amount_max)*$GLOBALS["PAYOUT_AMOUNT_MULTIPLIER"]*100 , 0 ); //вычиисление процентов
+      					$data['boa'] = "Вы получили " . round($amount,4) . " енотов!<br>Мультикаст: ".round($multi,1)."x<br>Удача: ".$chance."%";
                 
       					echo json_encode($data);
                 die;
