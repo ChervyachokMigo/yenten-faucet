@@ -32,7 +32,7 @@ $url = 'https://www.google.com/recaptcha/api/siteverify';
 
 require_once("jsonRPCClient.php");
   try{
-		$alt = new jsonRPCClient($GLOBALS["RPC_URL"]); //set to coin daemon user/pass/port
+		$alt = new jsonRPCClient($GLOBALS["RPC_URL"]); 
   }
   catch(Exception $e) {
       $errors['RPCClient'] = "No Connection!";
@@ -41,8 +41,8 @@ require_once("jsonRPCClient.php");
       echo json_encode($data);
       die;
   }
-$min = $GLOBALS["PAYOUT_MIN"]; //set to minimum payout
-$max = $GLOBALS["PAYOUT_MAX"]; //set to max payout
+$min = $GLOBALS["PAYOUT_MIN"];
+$max = $GLOBALS["PAYOUT_MAX"];
 $amount = rand($min,$max);
 $amount=$amount/$GLOBALS["PAYOUT_AMOUNT_MULTIPLIER"];
 		$username = $_POST['address'];
