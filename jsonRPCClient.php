@@ -89,9 +89,9 @@ class jsonRPCClient {
 		// message id
 		$this->id = 1;
 		
-		if (!isset($_GLOBALS['jsonRpc-cookies']))
+		if (!isset($GLOBALS['jsonRpc-cookies']))
 		{
-			$_GLOBALS['jsonRpc-cookies'] = array();
+			$GLOBALS['jsonRpc-cookies'] = array();
 		}
 	}
 	
@@ -152,7 +152,7 @@ class jsonRPCClient {
 							'header'  => 'Content-type: application/json\r\n',										 
 							'content' => $request
 		));		
-		if ($this->username)
+		if ($this->username && isset($GLOBALS['jsonRpc-cookies']))
 		{
 			$opts['http']['header'] .= 'Authorization:Basic '.base64_encode($this->username.':'.$this->password).'\r\n';
 		}
@@ -162,7 +162,7 @@ class jsonRPCClient {
 		}
 		
 		$context  = stream_context_create($opts);
-		if ($fp = fopen($this->url, 'r', false, $context)) {
+		if ($fp = @fopen($this->url, 'r', false, $context)) {
 			
 			#$http_response_header;
 			$cookies = find('Set-Cookie:',$http_response_header);
@@ -183,13 +183,13 @@ class jsonRPCClient {
 				}
 				$GLOBALS['jsonRpc-cookies'][$cookieArName] = $cookieAr;
 			}
-#			print_r($_GLOBALS);exit;
 			$response = '';
 			while($row = fgets($fp)) {
 				$response.= trim($row)."\n";
 			}
 			$this->debug && $debug.='***** Server response *****'."\n".$response.'***** End of server response *****'."\n";
 			$response = json_decode($response,false);
+			$isnoconnect = 1;
 		} else {
 			throw new Exception('Unable to connect to '.$this->url);
 		}
@@ -213,7 +213,7 @@ class jsonRPCClient {
 			return $response->result;
 			
 		} else {
-			return true;
+			return true; 
 		}
 	}
 	/**
