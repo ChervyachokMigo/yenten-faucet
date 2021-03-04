@@ -1,6 +1,7 @@
 <?php
 /*
 Настройки RPC указываются в yenten/data/yenten.conf
+Содержимое файла:
 rpcuser=test
 rpcpassword=pasik
 stdinrpcpass=pasik
@@ -8,6 +9,8 @@ rpcallowip=127.0.0.1
 server=1
 daemon=1
 rpcport=9982
+
+Кошелек должен быть запущен!
 */
 $GLOBALS["RPC_URL"] = 'http://test:pasik@127.0.0.1:9982';
 //коды для рекапчи http://www.google.com/recaptcha/admin
