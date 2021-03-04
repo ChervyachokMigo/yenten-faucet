@@ -46,7 +46,7 @@
       $multi_min = $GLOBALS["PAYOUT_MULTICAST_MIN"];
       $multi_max = $GLOBALS["PAYOUT_MULTICAST_MAX"];
 
-      $multi = ( rand( $multi_min*10, $multi_min*10 ) / 100) * 10;
+      $multi = ( rand( $multi_min*10, $multi_max*10 ) / 100) * 10;
       $amount = rand( $min, $max ) * $multi;
       $amount_max = $max * $multi_max;
       $amount=$amount/$GLOBALS["PAYOUT_AMOUNT_MULTIPLIER"];
