@@ -17,6 +17,17 @@
 require_once("jsonRPCClient.php");
 require_once("server_config.php");
 $alt = new jsonRPCClient($GLOBALS["RPC_URL"]);
+  
+  $balance = 0;
+  $faucettext_3 = "";
+  try {
+    $balance = $alt->getbalance();
+  } catch(Exception $e) {
+    $balance = "0.00";
+    $faucettext_3 = " Нет соединения!";
+  }
+  $faucettext_1 = "На кране осталось ";
+  $faucettext_2 =  " енотов";
 
 ?>
 
@@ -150,22 +161,33 @@ $alt = new jsonRPCClient($GLOBALS["RPC_URL"]);
   <div id="error" class="col-md-4 col-md-offset-4" style="margin-top: 5px; margin-bottom: 5px;"></div>
 </div>
 
-<div class="row">
 <div class="col-md-4 col-md-offset-4" style="margin-bottom: 30px;">
-<form role="form"  id="faucet" class="hidden">
-  <div class="form-group">
-    <label for="address">Yenten Адрес</label>
-    <input type="address" name="address" class="form-control" id="address" placeholder="Введи свой адресс кошелька">
-  </div>
-   <div class="captcha_wrapper" id="recaptcha">
-	<div class="g-recaptcha" data-sitekey="<?php echo $GLOBALS['RPC_RECAPTCHA_SITEKEY']; ?>"></div>
-		<br/>
-	</div>
-  <button type="submit" class="btn btn-default" id="form_submit" name="submit">Получить YTN</button>
-  <button type="button" class="hidden" id="page_refresh" name="page_refresh" onclick="window.location.reload()">Обновить</button>
-</form>
+<?php if ($faucettext_3 == ""){ 
+	echo '<div class="row">
+	<form role="form"  id="faucet" class="hidden">
+	  <div class="form-group">
+	    <label for="address">Yenten Адрес</label>
+	    <input type="address" name="address" class="form-control" id="address" placeholder="Введи свой адресс кошелька">
+	  </div>
+	   <div class="captcha_wrapper" id="recaptcha">
+		<div class="g-recaptcha" data-sitekey="'.$GLOBALS['RPC_RECAPTCHA_SITEKEY'].'"></div>
+			<br/>
+		</div>
+	  <button type="submit" class="btn btn-default" id="form_submit" name="submit">Получить YTN</button>
+	  <button type="button" class="hidden" id="page_refresh" name="page_refresh" onclick="window.location.reload()">Обновить</button>
+	</form>
+	</div>';
+} else {
+	echo ' <div class="col-md-4 col-md-offset-2" style="">
+				<img style="width: 256px; float: left;" id="loading" src="noconnection.gif">
+			</div>';
+	echo '	<div class="col-md-4 col-md-offset-4" style="margin-left:170px; margin-top: 30px;">
+				<button type="button" id="page_refresh_2" name="page_refresh_2" onclick="window.location.reload()">Обновить</button>
+			</div>';
+}
+?>
 </div>
-</div>
+
 </div>
 
 <script>
@@ -179,20 +201,14 @@ $(window).load(function () {
 </script>
 
 <div class="row">
-<div class="col-md-6 col-md-offset-3" style="margin-top: 30px; ">
+<div class="col-md-6 col-md-offset-3" style=" ">
 
 <h4 align="center"><a href="https://ytn.ccore.online/address/ye2ndkfp53wv6zg5gpnucrdkpdicenbey9" placeholder="Пополнить">
     <?php 
-      $balance = 0;
-      try {
-        $balance = $alt->getbalance();
-      } catch(Exception $e) {
-        $balance = "0.00";
-        $faucettext_3 = " (Нет соединения!)";
-      }
-      $faucettext_1 = "На кране осталось ";
-      $faucettext_2 =  " енотов";
-      echo $faucettext_1.(round ($balance,2)).$faucettext_2;
+      if ($faucettext_3 == "")
+      	echo $faucettext_1.(round ($balance,2)).$faucettext_2;
+      else 
+      	echo $faucettext_3;
     ?>
  </a></h5>
 
