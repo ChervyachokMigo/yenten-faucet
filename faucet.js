@@ -1,11 +1,25 @@
 $(document).ready(function () {
 
+		var walletCockie = document.cookie.replace(/(?:(?:^|.*;\s*)wallet\s*\=\s*([^;]*).*$)|^.*$/, "$1");
+
+		if (walletCockie != undefined) {
+			$('input[name=address]').val(walletCockie);
+		}
+
+		//отправка данных
 		$('form').submit(function (event) {
     
-//$('#exampleModalCenter').modal('hide');    
+		$("#form_submit").addClass("hidden");
+
+		$("#logo").addClass("hidden");
+		$("#loading").removeClass("hidden");
 
 		var formData = $("form").serialize();
-$('#error').removeClass('alertaerro');
+
+		$('#error').removeClass('alertaerro');
+		$('#recaptcha').addClass('hidden');
+
+		document.cookie = "wallet="+$('input[name=address]').val()+";";
 
 		$.ajax({
 			type: 'POST',
@@ -14,30 +28,31 @@ $('#error').removeClass('alertaerro');
 			dataType: 'json',
 			encode: true
 		}).done(function (data) {
-			console.log(data.errors);
+			//console.log(data.errors);
 			if (data.errors) {
 				if (data.errors.human) {
 					$('#error').append('<div class="alert alert-dismissable alert-danger"><button type="button" class="close" data-dismiss="alert">×</button>' + data.errors.human + '</div>');
-					$('input[name=address]').val("");
 				}
 				if (data.errors.address) {
 					$('#error').append('<div class="alert alert-dismissable alert-danger"><button type="button" class="close" data-dismiss="alert">×</button>' + data.errors.address + '</div>');
-					$('input[name=address]').val("");
 				}
 				if (data.errors.balance) {
 					$('#error').append('<div class="alert alert-dismissable alert-danger"><button type="button" class="close" data-dismiss="alert">×</button>' + data.errors.balance + '</div>');
-					$('input[name=address]').val("");
 				}
-
 			} else {
-				$('#error').append('<div class="alert alert-dismissable alert-success"><button type="button" class="close" data-dismiss="alert">×</button><h2>' + data.boa + '</h2></div>');
-				$('input[name=address]').val("");
+				$('#error').append('<div class="alert alert-dismissable alert-success"><button type="button" class="close" data-dismiss="alert">×</button><h3>' + data.boa + '</h3></div>');
 			}
+			$("#page_refresh").removeClass("hidden");
+			$("#logo").removeClass("hidden");
+			$("#loading").addClass("hidden");
 		}).fail(function (data) {
+			//console.log(data);
 			if (data) {
 				$('#error').append('<div class="alert alert-dismissable alert-danger"><button type="button" class="close" data-dismiss="alert">×</button>' + "No Connection!" + '</div>');
-				$('input[name=address]').val("");
 			}
+			$("#page_refresh").removeClass("hidden");
+			$("#logo").removeClass("hidden");
+			$("#loading").addClass("hidden");
 		});
 
 		event.preventDefault();

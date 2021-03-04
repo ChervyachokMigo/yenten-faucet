@@ -22,7 +22,7 @@ $url = 'https://www.google.com/recaptcha/api/siteverify';
 	$captcha_success=json_decode($verify);
 	if ($captcha_success->success==false) {
 
-			$errors['human'] = 'Human Test failed.';
+			$errors['human'] = 'Неправильная капча.';
 			$data['errors'] = true;
 			$data['errors']  = $errors;
 			echo json_encode($data);
@@ -31,25 +31,27 @@ $url = 'https://www.google.com/recaptcha/api/siteverify';
 	} elseif ($captcha_success->success==true) {
 
 require_once("jsonRPCClient.php");
-  try{
+  //try{
 		$alt = new jsonRPCClient($GLOBALS["RPC_URL"]); 
-  }
-  catch(Exception $e) {
-      $errors['RPCClient'] = "No Connection!";
+  //}
+  /*catch(Exception $e) {
+      $errors['RPCClient'] = "Нет соединения!";
       $data['errors'] = true;
       $data['errors']  = $errors;
       echo json_encode($data);
       die;
-  }
+  }*/
 $min = $GLOBALS["PAYOUT_MIN"];
 $max = $GLOBALS["PAYOUT_MAX"];
-$amount = rand($min,$max);
+$multi = (rand(50, 100) / 100) * 10;
+$amount = rand($min,$max)*$multi;
+$amount_max = $GLOBALS["PAYOUT_MAX"]*10;
 $amount=$amount/$GLOBALS["PAYOUT_AMOUNT_MULTIPLIER"];
 		$username = $_POST['address'];
 		$check = $alt->validateaddress($username);
 
 		if($alt->getbalance() < $amount){
-  			$errors['balance'] = 'The faucet is empty';
+  			$errors['balance'] = 'Кран пуст.';
   			$data['errors'] = true;
   			$data['errors']  = $errors;
   			echo json_encode($data);
@@ -62,13 +64,15 @@ $amount=$amount/$GLOBALS["PAYOUT_AMOUNT_MULTIPLIER"];
             $alt->sendtoaddress($username, $amount);
 
   					$data['success'] = true;
-  					$data['boa'] = "You got " . $amount . " YTN!";
+            $chance = ($amount/$amount_max)*$GLOBALS["PAYOUT_AMOUNT_MULTIPLIER"]*100;
+  					$data['boa'] = "Вы получили " . $amount . " енотов!<br>Мультикаст: ".$multi."x<br>Эффективность: ".$chance."%";
+            
   					echo json_encode($data);
             die;
 				}
         
         else {
-            $errors['address'] = 'Address error';
+            $errors['address'] = 'Неправильный адрес.';
   					$data['errors'] = true;
   					$data['errors']  = $errors;
   					echo json_encode($data);

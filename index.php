@@ -10,37 +10,59 @@
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
 <script src="https://www.google.com/recaptcha/api.js" async defer></script>
 </head>
-<body style="background:#e3f0fb; margin: 30px; padding-top: 50px;">
+<body style="background:#eee; margin: 30px; padding-top: 50px;">
+
 <?php
+
 require_once("jsonRPCClient.php");
 require_once("server_config.php");
-
 $alt = new jsonRPCClient($GLOBALS["RPC_URL"]);
+
 ?>
 
 
 <style>
-.faucet-nav {
-    text-shadow: 0 -1px 0 rgba(0,0,0,.15);
-    background-color: #3D597C;
-    border-color: #5478A5;
-    box-shadow: 0 1px 0 rgba(255,255,255,.1);
-}
-.faucet-nav .navbar-nav>.active>a, .faucet-nav .navbar-nav>.active>a:hover {
-    color: #fff;
-    background-color: #2F4561;
-}
-.faucet-nav .navbar-nav>li>a {
-    color: #BFE0E3;
-}
-.faucet-nav .navbar-brand {
-    color: #fff;
-}
-div.hidden
-{
-   display: none
-}
+    .faucet-nav {
+        text-shadow: 0 1px 1px rgba(0,0,0,.3);
+        box-shadow: 0 1px 0 rgba(255,165,0,.2);
+        background-color: #DDD;
+        border-color: #ffa500;
+        
+    }
+    .dropdown-menu>li>a, .dropdown, .faucet-nav .navbar-nav>.active>a, .faucet-nav .navbar-nav>.active>a:hover {
+        color: #ffa500;
+        background-color: #DDD;
+        
+
+    }
+     .dropdown-menu{
+        background-color: #DDD;
+        box-shadow: 0 1px 1px rgba(255,165,0,.2);
+     }
+     .dropdown-menu>li>a:hover {
+       background-color: #CCC;
+      color: #000;
+      }
+    .dropdown open {
+      background-color: #DDD;
+      color: #ffa500;
+    }
+    .faucet-nav .navbar-nav>li>a {
+        color: #ffa500;
+    }
+    .faucet-nav .navbar-brand {
+        color: #FF8C00;
+    }
+    div.hidden
+    {
+       display: none
+    }
+
+    a, a:hover{
+      color: #ff6600;
+    }
 </style>
+
 
 <div class="navbar navbar-inverse navbar-fixed-top faucet-nav" role="navigation">
 <div class="container">
@@ -51,45 +73,57 @@ div.hidden
 <span class="icon-bar"></span>
 <span class="icon-bar"></span>
 </button>
-<a class="navbar-brand" href="#">2ch Yenten Faucet</a>
+<a class="navbar-brand" href="#">Двач кран енотов</a>
 </div>
 <div class="navbar-collapse collapse">
 <ul class="nav navbar-nav">
-<li class="active"><a href="#">Home</a></li>
-<li><a href="">Speed table CPU</a></li>
-<li><a href="">О монете</a></li>
 <li class="dropdown">
-<a href="#" class="dropdown-toggle" data-toggle="dropdown">How to <b class="caret"></b></a>
+<a href="#" class="dropdown-toggle" data-toggle="dropdown">мой мир<b class="caret"></b></a>
 <ul class="dropdown-menu">
-<li><a href="">How to use faucet Yenten Coin — free coins</a></li>
-<li><a href="">How to install and setup Yenten Coin wallet on windows</a></li>
-<li><a href="">How to install the yiimp pool on the ubuntu 16.04 server and configure yenten coin</a></li>
+<li><a href="">огромен</a></li>
 </ul>
 </li>
 <li class="dropdown">
-<a href="#" class="dropdown-toggle" data-toggle="dropdown">Инструкции <b class="caret"></b></a>
+<a href="#" class="dropdown-toggle" data-toggle="dropdown">а я<b class="caret"></b></a>
 <ul class="dropdown-menu">
-<li><a href="">Кран Yenten Coin как пользоваться, YTN — бесплатная раздача монет</a></li>
-<li><a href="">Как установить и настроить кошелек yenten coin в windows</a></li>
-<li><a href="">Устанавливаем пул yiimp pool на сервер ubuntu 16.04 и настраиваем yenten coin</a></li>
-<li><a href="">Устанавливаем Ununtu live usb на флешку, компилируем майнер cpuminer-opt</a></li>
+<li><a href="">так скромен</a></li>
+<li><a href="">вся жизнь спекталь</a></li>
+<li><a href="">я в ней актер</a></li>
 </ul>
 </li>
 <li class="dropdown">
-<a href="#" class="dropdown-toggle" data-toggle="dropdown">Pools for mining<b class="caret"></b></a>
+<a href="#" class="dropdown-toggle" data-toggle="dropdown">актер лицедей<b class="caret"></b></a>
 <ul class="dropdown-menu">
-<li><a href="yenten-pool.ml"></a></li>
-<li><a href="#">...</a></li>
+<li><a href="">добряк и злодей</a></li>
+<li><a href="">не ради людей</a></li>
+<li><a href=""><b>а ради искусства!</b></a></li>
 </ul>
 </li>
 <li class="dropdown">
-<a href="#" class="dropdown-toggle" data-toggle="dropdown">Forums<b class="caret"></b></a>
+<a href="#" class="dropdown-toggle" data-toggle="dropdown">по жизни<b class="caret"></b></a>
 <ul class="dropdown-menu">
-<li><a href="">Russian Forum</a></li>
-<li><a href="">World Forum</a></li>
+<li><a href="">играю</a></li>
+<li><a href="">я все секреты</a></li>
+<li><a href="">ваши знаю</a></li>
 </ul>
 </li>
-<li><a target="_blank" href="">Биржа (stock)</a></li>
+<li class="dropdown">
+<a href="#" class="dropdown-toggle" data-toggle="dropdown">вы в зале<b class="caret"></b></a>
+<ul class="dropdown-menu">
+<li><a href="">сидите</a></li>
+<li><a href="">и ваши нервы</a></li>
+<li><a href="">словно нити</a></li>
+</ul>
+</li>
+<li class="dropdown">
+<a href="#" class="dropdown-toggle" data-toggle="dropdown">надежно<b class="caret"></b></a>
+<ul class="dropdown-menu">
+<li><a href="">пришиты</a></li>
+<li><a href="">к пальцам</a></li>
+<li><a href="">моим!</a></li>
+</ul>
+</li>
+
 </ul>
 </div>
 </div>
@@ -97,19 +131,13 @@ div.hidden
 
 
 <div id="container">
+
 <div class="row">
-<div class="col-md-4 col-md-offset-4" style="font-size: 13px;">
-<img style="width: 95px; float: left; margin-right: 10px;" src="logo.png">  
-Yenten is a cryptocurrency of the cpu, by the cpu, for the cpu.
-<br>No ASIC mineable.
-<br>Mining coins at using PC. On any PC! Anyone. 
-<br>It's great!
-</div>
-</div>
-<div class="row">
-	<div class="col-md-12" style="margin-top: 4px;">
-	<h1 align="center">2ch Yenten Faucet</h1>
-  <h2 align="center">bubasik soset koshachu jopy</h2>
+	<div class="col-md-4 col-md-offset-4" style="margin-top: 4px;">
+    <img style="width: 150px; float: left; margin-right: 10px;margin-top:10px;" id="loading" src="loading.gif"> 
+<a href="https://2ch.hk/cc/res/559349.html"><img style="width: 150px; float: left; margin-right: 10px;margin-top:10px;" id="logo" src="logo.png"> </a>
+	<h1 align="center" style="color: #ffa500;margin-top:50px;">Двач кран енотов</h1>
+  <h5 align="center" style="color: #ccc;">bubasik soset koshachu jopy</h5>
 <div align="center">
 
 <br>
@@ -117,75 +145,64 @@ Yenten is a cryptocurrency of the cpu, by the cpu, for the cpu.
 </div>  
 	</div>
 </div>
-<div class="row">
-<div id="error" class="col-md-4 col-md-offset-4" style="margin-top: 5px; margin-bottom: 5px;">
-</div>
-</div>
-<div class="row">
-<div class="col-md-4 col-md-offset-3" style="margin-top: 25px; margin-bottom: 30px;">
 
+<div class="row" style="margin-top: 25px;">
+  <div id="error" class="col-md-4 col-md-offset-4" style="margin-top: 5px; margin-bottom: 5px;"></div>
+</div>
+
+<div class="row">
+<div class="col-md-4 col-md-offset-4" style="margin-bottom: 30px;">
 <form role="form"  id="faucet" class="hidden">
   <div class="form-group">
-    <label for="address">Yenten Address</label>
+    <label for="address">Yenten Адрес</label>
     <input type="address" name="address" class="form-control" id="address" placeholder="Введи свой адресс кошелька">
   </div>
-   <div class="captcha_wrapper">
+   <div class="captcha_wrapper" id="recaptcha">
 	<div class="g-recaptcha" data-sitekey="<?php echo $GLOBALS['RPC_RECAPTCHA_SITEKEY']; ?>"></div>
 		<br/>
 	</div>
-  <button type="submit" class="btn btn-default" name="submit">Submit</button>
-  
+  <button type="submit" class="btn btn-default" id="form_submit" name="submit">Получить YTN</button>
+  <button type="button" class="hidden" id="page_refresh" name="page_refresh" onclick="window.location.reload()">Обновить</button>
 </form>
 </div>
-
-<div align="center" style="text-align: center; float: left;">
-
-<br>
-
 </div>
-
 </div>
 
 <script>
 $(window).load(function () {
     $("#faucet").removeClass("hidden");
+    $("#logo").removeClass("hidden");
+    $("#loading").addClass("hidden");
 });
+    $("#logo").addClass("hidden");
+    $("#loading").removeClass("hidden");
 </script>
-
-
-<div class="row">
-<div class="col-md-6" style="margin-top: 30px; ">
-
-
-
-</div>
-<div class="col-md-6" style="margin-top: 30px; ">
-
-
-
-</div>
 
 <div class="row">
 <div class="col-md-6 col-md-offset-3" style="margin-top: 30px; ">
 
-<h5 align="center">Faucet Balance: <?php 
-$balance = "0.00";
-try {
-  $balance = $alt->getbalance();
-} catch(Exception $e) {
-  $balance = "No Connection!";
-}
-echo($balance);
- ?>
-<br><br>
+<h4 align="center"><a href="https://ytn.ccore.online/address/ye2ndkfp53wv6zg5gpnucrdkpdicenbey9" placeholder="Пополнить"><a id="wallettext">
+    <?php 
+      $balance = 0;
+      try {
+        $balance = $alt->getbalance();
+      } catch(Exception $e) {
+        $balance = "0.00";
+        $faucettext_3 = " (Нет соединения!)";
+      }
+      $faucettext_1 = "На кране осталось ";
+      $faucettext_2 =  " енотов";
+      echo $faucettext_1.(round ($balance,2)).$faucettext_2;
+    ?>
+ </a></h5>
 
-<br><br>
+<h5 align="center">
 <a href="https://2chpool.cc/" target="_blank">https://2chpool.cc/</a> (<?php echo date("Y") ?>) </h5>
 </div>
 </div>
 </div>
 
-<script src="faucet.js?ver2"></script>
+<script src="faucet.js?ver3"></script>
 
 </body>
 
