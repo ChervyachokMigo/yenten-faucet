@@ -66,7 +66,7 @@
       $isRare = 0;
       $rare_chance = $GLOBALS["PAYOUT_RARE_CHANCE"];
       $rare_roll = rand(1,10000);
-      	if ( ($rare_roll > (10000 - ( $rare_chance/2 ) * 100) ) || ( $rare_roll < ( $rare_chance/2 ) * 100 ) ){
+      	if ( ($rare_roll >= (10000 - ( $rare_chance/2 ) * 100) ) || ( $rare_roll <= ( $rare_chance/2 ) * 100 ) ){
       		$isRare = 1;
       		$amount = $amount * $rare_chance;
       		$chance = $chance * $rare_chance;
