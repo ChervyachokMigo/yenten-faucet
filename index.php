@@ -212,6 +212,17 @@ $(window).load(function () {
     ?>
  </a></h5>
 
+<h6 align="center">
+  <?php     
+
+   $all_max = $all_max / $GLOBALS["PAYOUT_AMOUNT_MULTIPLIER"];
+   $all_min = $all_min / $GLOBALS["PAYOUT_AMOUNT_MULTIPLIER"];
+
+   echo "Возможные выигрыши: ".$all_min." - ".$all_max." енотов";
+
+   ?>
+</h6>
+
 <h5 align="center">
 <a href="https://2chpool.cc/" target="_blank">https://2chpool.cc/</a> (<?php echo date("Y") ?>) </h5>
 </div>
