@@ -187,9 +187,9 @@ class jsonRPCClient {
 			while($row = fgets($fp)) {
 				$response.= trim($row)."\n";
 			}
+			fclose($fp);
 			$this->debug && $debug.='***** Server response *****'."\n".$response.'***** End of server response *****'."\n";
 			$response = json_decode($response,false);
-			$isnoconnect = 1;
 		} else {
 			throw new Exception('Unable to connect to '.$this->url);
 		}
