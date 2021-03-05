@@ -224,7 +224,7 @@ class jsonRPCClient {
 	public function setAuthParams($username, $password=null)
 	{
 		$this->username = $username;		
-		$this->password = $passord;
+		$this->password = $password;
 	} 
 }
 
