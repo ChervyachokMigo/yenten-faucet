@@ -1,6 +1,7 @@
 # Двач кран енотов
 ## 2ch Yenten-coin faucet
 
+Работает в данный моменнт на: 2ch-yenten-faucet.ml
 
 * server_config.php - все настрйоки объеденены в один файл.
 
