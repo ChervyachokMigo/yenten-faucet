@@ -69,6 +69,13 @@ for ($i=0;$i<100000;$i++){
 		if (round($payout_yentens,4)>=$all_max/2 && round($payout_yentens,4)<=$all_max){
 			$out[9]++;
 		}
+		if (round($payout_yentens,4)>=$GLOBALS["PAYOUT_AMOUNT_MULTIPLIER"]){
+			$out["1 ytn"]++;
+		}
+		if (round($payout_yentens,4)<=($GLOBALS["PAYOUT_AMOUNT_MULTIPLIER"]/10)){
+			$out["01 ytn"]++;
+		}
+
 		$out_all++;
 
 		if ($lucky_multi == 1){
@@ -93,15 +100,19 @@ echo "<br>max".$all_max;
 echo "<br>min".$all_min;
 
 echo "<br>";
-echo "1: ".$out[1]/$out_all."<br>";
-echo "2: ".$out[2]/$out_all."<br>";
-echo "3: ".$out[3]/$out_all."<br>";
-echo "4: ".$out[4]/$out_all."<br>";
-echo "5: ".$out[5]/$out_all."<br>";
-echo "6: ".$out[6]/$out_all."<br>";
-echo "7: ".$out[7]/$out_all."<br>";
-echo "8: ".$out[8]/$out_all."<br>";
-echo "9: ".$out[9]/$out_all."<br>";
+echo "1: ".($out[1]/$out_all*100)."<br>";
+echo "2: ".($out[2]/$out_all*100)."<br>";
+echo "3: ".($out[3]/$out_all*100)."<br>";
+echo "4: ".($out[4]/$out_all*100)."<br>";
+echo "5: ".($out[5]/$out_all*100)."<br>";
+echo "6: ".($out[6]/$out_all*100)."<br>";
+echo "7: ".($out[7]/$out_all*100)."<br>";
+echo "8: ".($out[8]/$out_all*100)."<br>";
+echo "9: ".($out[9]/$out_all*100)."<br>";
+echo "less than 0.1 ytn: ".($out["01 ytn"]/$out_all*100)."<br>";
+echo "0.1 - 1: ".(100-($out["01 ytn"]/$out_all*100)+($out["1 ytn"]/$out_all*100))."<br>";
+echo "more than 1 ytn: ".($out["1 ytn"]/$out_all*100)."<br>";
+echo "lucky chance".($out["lucky_2"]/$out["lucky_1"]*100)."<br>";
 echo "<pre>";
 print_r($out);
 echo "</pre>";
