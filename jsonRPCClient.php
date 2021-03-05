@@ -158,7 +158,7 @@ class jsonRPCClient {
 		}
 		foreach ($GLOBALS['jsonRpc-cookies'] as $cookieName => $cookieObj)
 		{
-			$opts['http']['header'] .= 'Cookie:'.$cookeName.'='.$cookieObj[$cookeName].';\r\n';
+			$opts['http']['header'] .= 'Cookie:'.$cookieName.'='.$cookieObj[$cookieName].';\r\n';
 		}
 		
 		$context  = stream_context_create($opts);

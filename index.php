@@ -166,10 +166,10 @@ $alt = new jsonRPCClient($GLOBALS["RPC_URL"]);
 <div class="col-md-4 col-md-offset-4" style="margin-bottom: 30px;">
 <?php if ($faucettext_3 == ""){ 
 	echo '<div class="row">
-	<form role="form"  id="faucet" class="hidden">
+	<form role="form"  id="faucet" class="hidden" novalidate method="POST" >
 	  <div class="form-group">
 	    <label for="address">Yenten Адрес</label>
-	    <input type="address" name="address" class="form-control" id="address" placeholder="Введи свой адресс кошелька">
+	    <input type="address" name="address" class="form-control" id="address" required data-validation-required-message="Введи свой адресс кошелька" placeholder="Введи свой адресс кошелька">
 	  </div>
 	   <div class="captcha_wrapper" id="recaptcha">
 		<div class="g-recaptcha" data-sitekey="'.$GLOBALS['RPC_RECAPTCHA_SITEKEY'].'"></div>
@@ -231,7 +231,7 @@ $(window).load(function () {
 </div>
 </div>
 
-<script src="faucet.js?ver3"></script>
+<script src="faucet.js?random=<?php echo time(); ?>"></script>
 
 </body>
 

@@ -1,8 +1,16 @@
 <?php
+
+//header("Cache-Control: no-store, no-cache, must-revalidate, max-age=0");
+//header("Cache-Control: post-check=0, pre-check=0", false);
+//header("Pragma: no-cache");
+
+
+
 //данные для добавления в таблицу логов
   require_once("server_config.php");
 
-  $response = $_POST["g-recaptcha-response"];
+  $response = htmlspecialchars($_POST["g-recaptcha-response"]);
+  $username = htmlspecialchars($_POST['address']);
 
   $url = 'https://www.google.com/recaptcha/api/siteverify';
 	$data = array(
@@ -10,13 +18,16 @@
 		'response' => $response
 	);
 	$options = array(
-		'http' => array (
-       'header' => "Content-Type: application/x-www-form-urlencoded\r\n".
-                    "User-Agent:MyAgent/1.0\r\n",
+			'http' => array (
+	        'header' => "Content-Type: application/x-www-form-urlencoded;".
+                    "User-Agent:MyAgent/1.0; Access-Control-Allow-Origin: *;",
 			'method' => 'POST',
 			'content' => http_build_query($data)
 		)
 	);
+
+
+
 	$context  = stream_context_create($options);
 	$verify = @file_get_contents($url, false, $context);
 	$captcha_success=json_decode($verify);
@@ -31,16 +42,10 @@
 	} elseif ($captcha_success->success==true) {
 
       require_once("jsonRPCClient.php");
-        //try{
-      		$alt = new jsonRPCClient($GLOBALS["RPC_URL"]); 
-        //}
-        /*catch(Exception $e) {
-            $errors['RPCClient'] = "Нет соединения!";
-            $data['errors'] = true;
-            $data['errors']  = $errors;
-            echo json_encode($data);
-            die;
-        }*/
+
+      $alt = new jsonRPCClient($GLOBALS["RPC_URL"]); 
+      $alt->setAuthParams($GLOBALS["RPC_CONNECT_NAME"], $GLOBALS["RPC_CONNECT_PASSWORD"]);
+
       $min = $GLOBALS["PAYOUT_MIN"];
       $max = $GLOBALS["PAYOUT_MAX"];
       $multi_min = $GLOBALS["PAYOUT_MULTICAST_MIN"];
@@ -52,9 +57,8 @@
       $amount = $roll * $multi;
       $amount_min = $min * $multi_min;
       $amount_max = $max * $multi_max;
-      $amount=$amount / $GLOBALS["PAYOUT_AMOUNT_MULTIPLIER"];
 
-      $chance = round( ($amount/$amount_max)*$GLOBALS["PAYOUT_AMOUNT_MULTIPLIER"]*100 , 0 ); //вычиисление процентов
+      $chance = round( ($amount / $amount_max) * 100 , 0 ); //вычиисление процентов
 
       $lucky_multi = 1;
       if ($chance>=$GLOBALS["PAYOUT_LUCKY_CHANCE_CAP"]) {
@@ -63,23 +67,24 @@
       $amount = $amount * $lucky_multi;
       $chance = $chance * $lucky_multi;
 
-      $rare_multiplier = $GLOBALS["PAYOUT_RARE_MULTIPLIER"];
+      
       $isRare = 0;
-      $rare_chance = 1;
+      $rare_chance = $GLOBALS["PAYOUT_RARE_CHANCE"];
+      $rare_multiplier = 1;
       $rare_roll = rand(1,10000);
       	if ( ($rare_roll >= (10000 - ( $rare_chance/2 ) * 100) ) || ( $rare_roll <= ( $rare_chance/2 ) * 100 ) ){
       		$isRare = 1;
-      		$rare_chance = $GLOBALS["PAYOUT_RARE_CHANCE"];
-
+      		$rare_multiplier = $GLOBALS["PAYOUT_RARE_MULTIPLIER"];
       	}
-      $amount = $amount * $rare_chance;
-      $chance = $chance * $rare_chance;
+      $amount = $amount * $rare_multiplier;
+      $chance = $chance * $rare_multiplier;
 
+      $payout_yentens = $amount / $GLOBALS["PAYOUT_AMOUNT_MULTIPLIER"];
+      		
 
-      		$username = $_POST['address'];
       		$check = $alt->validateaddress($username);
 
-      		if($alt->getbalance() < $amount){
+      		if($alt->getbalance() < $payout_yentens){
         			$errors['balance'] = 'Кран пуст.';
         			$data['errors'] = true;
         			$data['errors']  = $errors;
@@ -87,29 +92,48 @@
               		die;
       		} else {
       			
-      			if ( $amount <= ( $all_max / $GLOBALS["PAYOUT_AMOUNT_MULTIPLIER"] ) ){
+      			if ( $payout_yentens * $GLOBALS["PAYOUT_AMOUNT_MULTIPLIER"] <=  $all_max || $payout_yentens * $GLOBALS["PAYOUT_AMOUNT_MULTIPLIER"] >= $all_min ){
 		            if($check->{'isvalid'} == 1){
-			                $alt->sendtoaddress($username, $amount);
+		            	    if (strlen($GLOBALS["WALLET_PASS_PHRASE"])>0){
+		            			$alt->walletpassphrase( $GLOBALS["WALLET_PASS_PHRASE"], 60 );
+		            	    }
 
-							$data['success'] = true;
-			    
-							$data['boa'] = "Вы получили " . round($amount,4) . " енотов!<br>Выпало: ".$roll."<br>Мультикаст: ".round($multi,1)."x<br>Удача: ".$chance."%";
-							if ($chance>=95) {
-								$data['boa'] .= " (x".$lucky_multi."!)<br>";
+		            		try{
+			                	$ifSended = $alt->sendtoaddress($username, $payout_yentens);
+
+								$data['success'] = true;
+				    
+								$data['boa'] = "Вы получили " . round($payout_yentens,4) . " енотов!<br>Выпало: ".$roll."<br>Мультикаст: ".round($multi,1)."x<br>Удача: ".$chance."%";
+								if ($chance>=$GLOBALS["PAYOUT_LUCKY_CHANCE_CAP"]) {
+									$data['boa'] .= " (x".$lucky_multi."!)<br>";
+								}
+								if ($isRare == 1){
+									$data['boa'] .= "Невероятная удача!!! (х".$rare_multiplier.")<br>";
+								}
+								if (strlen($GLOBALS["WALLET_PASS_PHRASE"])>0){
+									$alt->walletlock();
+								}
+								echo json_encode($data);
+								die;
+							} catch (Exception $e) {
+								$errors['address'] = 'Произошла ошибка.';
+			  					$data['errors'] = true;
+			  					$data['errors']  = $errors;
+			  					echo json_encode($data);
+			           			die;
 							}
-							if ($isRare == 1){
-								$data['boa'] .= "Невероятная удача!!! (х".$rare_multiplier.")<br>";
-							}
-			
-							echo json_encode($data);
-							die;
 					} else {
-		            $errors['address'] = 'Неправильный адрес.';
+		            		$errors['address'] = 'Неправильный адрес.';
 		  					$data['errors'] = true;
 		  					$data['errors']  = $errors;
 		  					echo json_encode($data);
 		           			die;
 		      		}
+		      	} else {
+		      		$errors['human'] = 'Зачем?';
+					$data['errors'] = true;
+					$data['errors']  = $errors;
+					echo json_encode($data);
 		      	}
         	}
 

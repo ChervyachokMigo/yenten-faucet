@@ -9,53 +9,57 @@ $(document).ready(function () {
 		//отправка данных
 		$('form').submit(function (event) {
     
-		$("#form_submit").addClass("hidden");
+			document.cookie = "wallet="+$('input[name=address]').val()+";";
 
-		$("#logo").addClass("hidden");
-		$("#loading").removeClass("hidden");
+			$("#form_submit").addClass("hidden");
 
-		var formData = $("form").serialize();
+			$("#logo").addClass("hidden");
+			$("#loading").removeClass("hidden");
 
-		$('#error').removeClass('alertaerro');
-		$('#recaptcha').addClass('hidden');
+			
 
-		document.cookie = "wallet="+$('input[name=address]').val()+";";
+			$('#error').removeClass('alertaerro');
+			$('#recaptcha').addClass('hidden');
 
-		$.ajax({
-			type: 'POST',
-			url: 'faucet.php',
-			data: formData,
-			dataType: 'json',
-			encode: true
-		}).done(function (data) {
-			//console.log(data.errors);
-			if (data.errors) {
-				if (data.errors.human) {
-					$('#error').append('<div class="alert alert-dismissable alert-danger"><button type="button" class="close" data-dismiss="alert">×</button>' + data.errors.human + '</div>');
+		
+
+			var formData = $("form").serialize();
+
+			$.ajax({
+				type: 'POST',
+				url: 'faucet.php',
+				data: formData,
+				dataType: 'json',
+				encode: true
+			}).done(function (data) {
+				//console.log(data.errors);
+				if (data.errors) {
+					if (data.errors.human) {
+						$('#error').append('<div class="alert alert-dismissable alert-danger"><button type="button" class="close" data-dismiss="alert">×</button>' + data.errors.human + '</div>');
+					}
+					if (data.errors.address) {
+						$('#error').append('<div class="alert alert-dismissable alert-danger"><button type="button" class="close" data-dismiss="alert">×</button>' + data.errors.address + '</div>');
+					}
+					if (data.errors.balance) {
+						$('#error').append('<div class="alert alert-dismissable alert-danger"><button type="button" class="close" data-dismiss="alert">×</button>' + data.errors.balance + '</div>');
+					}
+				} else {
+					$('#error').append('<div class="alert alert-dismissable alert-success"><button type="button" class="close" data-dismiss="alert">×</button><h3>' + data.boa + '</h3></div>');
 				}
-				if (data.errors.address) {
-					$('#error').append('<div class="alert alert-dismissable alert-danger"><button type="button" class="close" data-dismiss="alert">×</button>' + data.errors.address + '</div>');
+				$("#page_refresh").removeClass("hidden");
+				$("#logo").removeClass("hidden");
+				$("#loading").addClass("hidden");
+			}).fail(function (data) {
+				//console.log(data);
+				if (data) {
+					$('#error').append('<div class="alert alert-dismissable alert-danger"><button type="button" class="close" data-dismiss="alert">×</button>' + "No Connection!" + '</div>');
 				}
-				if (data.errors.balance) {
-					$('#error').append('<div class="alert alert-dismissable alert-danger"><button type="button" class="close" data-dismiss="alert">×</button>' + data.errors.balance + '</div>');
-				}
-			} else {
-				$('#error').append('<div class="alert alert-dismissable alert-success"><button type="button" class="close" data-dismiss="alert">×</button><h3>' + data.boa + '</h3></div>');
-			}
-			$("#page_refresh").removeClass("hidden");
-			$("#logo").removeClass("hidden");
-			$("#loading").addClass("hidden");
-		}).fail(function (data) {
-			//console.log(data);
-			if (data) {
-				$('#error').append('<div class="alert alert-dismissable alert-danger"><button type="button" class="close" data-dismiss="alert">×</button>' + "No Connection!" + '</div>');
-			}
-			$("#page_refresh").removeClass("hidden");
-			$("#logo").removeClass("hidden");
-			$("#loading").addClass("hidden");
-		});
+				$("#page_refresh").removeClass("hidden");
+				$("#logo").removeClass("hidden");
+				$("#loading").addClass("hidden");
+			});
 
-		event.preventDefault();
+			event.preventDefault();
 
 	});
 });
