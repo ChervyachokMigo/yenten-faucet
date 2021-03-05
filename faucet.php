@@ -44,7 +44,6 @@
       require_once("jsonRPCClient.php");
 
       $alt = new jsonRPCClient($GLOBALS["RPC_URL"]); 
-      $alt->setAuthParams($GLOBALS["RPC_CONNECT_NAME"], $GLOBALS["RPC_CONNECT_PASSWORD"]);
 
       $min = $GLOBALS["PAYOUT_MIN"];
       $max = $GLOBALS["PAYOUT_MAX"];
@@ -99,6 +98,7 @@
 		            	    }
 
 		            		try{
+		            			$alt->setAuthParams($username);
 			                	$ifSended = $alt->sendtoaddress($username, $payout_yentens);
 
 								$data['success'] = true;
