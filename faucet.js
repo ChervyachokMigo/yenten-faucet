@@ -51,7 +51,7 @@ $(document).ready(function () {
 			}).fail(function (data) {
 				//console.log(data);
 				if (data) {
-					$('#error').append('<div class="alert alert-dismissable alert-danger"><button type="button" class="close" data-dismiss="alert">×</button>' + "Бубасик украл твои монеты." + '</div>');
+					$('#error').append('<div class="alert alert-dismissable alert-danger"><button type="button" class="close" data-dismiss="alert">×</button>' + "Бубасик украл твои монеты.2" + '</div>');
 				}
 				$("#page_refresh").removeClass("hidden");
 				$("#logo").removeClass("hidden");

@@ -53,17 +53,16 @@ if ($captcha_success->success==false) {
 	die;
 
 } elseif ($captcha_success->success==true) {
+	require_once("BaseJsonRpcClient.php");
 
-    require_once("jsonRPCClient.php");
-
-    $alt = new jsonRPCClient($GLOBALS["RPC_URL"]); 
+    $RPC = new BaseJsonRpcClient($GLOBALS["RPC_URL"]);
 
     // выполнение подсчетов выплат
     include 'calc.php';
       		
-    $check = $alt->validateaddress($username);
+    $check = $RPC->validateaddress($username)->Result;
 
-	if($alt->getbalance() < $payout_yentens){
+	if($RPC->getbalance()->Result < $payout_yentens){
 		$errors['balance'] = 'Кран пуст.';
 		$data['errors'] = true;
 		$data['errors']  = $errors;
@@ -73,27 +72,35 @@ if ($captcha_success->success==false) {
       	if ( $payout_yentens * $GLOBALS["PAYOUT_AMOUNT_MULTIPLIER"] <=  $all_max || 
       		  $payout_yentens * $GLOBALS["PAYOUT_AMOUNT_MULTIPLIER"] >= $all_min ) {
 
-            if($check->{'isvalid'} == 1){
+            if($check['isvalid'] == 1){
         	    if (strlen($GLOBALS["WALLET_PASS_PHRASE"])>0){
-        			$alt->walletpassphrase( $GLOBALS["WALLET_PASS_PHRASE"], 60 ); }
+        			$e1 = $RPC->walletpassphrase( $GLOBALS["WALLET_PASS_PHRASE"], 60 ); }
         		try{
-        			$alt->setAuthParams($username);
-                	$ifSended = $alt->sendtoaddress($username, $payout_yentens);
+        			
+                	$transucktion_id = $RPC->sendtoaddress($username, $payout_yentens)->Result;
 
 					$data['success'] = true;
 	    
-					$data['boa'] = 	"Вы получили " . round($payout_yentens,4) . " енотов!<br>" .
+					$data['boa'] = 	'Вы получили <a href="https://ytn.ccore.online/transaction/utxo/'.
+									$transucktion_id.'">' . 
+									round($payout_yentens,4) . 
+									"</a> енотов!<br>" .
 									"Выпало: " . $roll . "<br>" . 
 									"Мультикаст: " . round($multi,1) . "x<br>" .
 									"Удача: " . $chance . "%";
+
 					if ($lucky_multi>1) {
-						$data['boa'] .= " (x" . $lucky_multi . "!)<br>";
+						$data['boa'] .= " (x" . $lucky_multi . "!)";
 					}
+
+					$data['boa'] .='<br>';
+
 					if ($isRare == 1){
-						$data['boa'] .= "Невероятная удача!!! (х" . $rare_multiplier . ")<br>";
+						$data['boa'] .= "Невероятная удача!!! (х" . $rare_multiplier . ")";
 					}
+
 					if (strlen($GLOBALS["WALLET_PASS_PHRASE"])>0){
-						$alt->walletlock();
+						$RPC->walletlock();
 					}
 					echo json_encode($data);
 					die;
@@ -120,4 +127,8 @@ if ($captcha_success->success==false) {
     }	// конец: кран не пустой
 
 }	// end capcha success=true
+
+function debugarr($arr){
+	return "<pre>".print_r($arr)."</pre>";
+}
 ?>

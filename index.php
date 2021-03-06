@@ -5,8 +5,6 @@
 <title>Yenten coin - Yenten-pool.ml Faucet</title>
 <meta name="robots" content="noindex,nofollow, noodp,noydir"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta http-equiv="pragma" content="no-cache" />
-<meta http-equiv="cache-control" content="no-cache" />
 <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
@@ -15,20 +13,20 @@
 <body style="background:#eee; margin: 30px; padding-top: 50px;">
 
 <?php
-
-require_once("jsonRPCClient.php");
-require_once("server_config.php");
-$alt = new jsonRPCClient($GLOBALS["RPC_URL"]);
+  require_once("BaseJsonRpcClient.php");
+  require_once("server_config.php");
   
+  $RPC = new BaseJsonRpcClient($GLOBALS["RPC_URL"]);
   $balance = 0;
   $faucet_balance = "";
   $faucettext_1 = "На кране осталось ";
   $faucettext_2 = " енотов";
-  try {
-    $balance = $alt->getbalance();
-    $faucet_balance = $faucettext_1 . (round ($balance,2)) . $faucettext_2;
-  } catch(Exception $e) {
-    $balance = "0.00";
+  
+  $balance = $RPC->getbalance()->Result;
+
+  if ($balance){
+    $faucet_balance = $faucettext_1 . (round ($balance,3)) . $faucettext_2;
+  } else {
     $faucet_balance = " Нет соединения!";
   }
 
@@ -165,7 +163,7 @@ $alt = new jsonRPCClient($GLOBALS["RPC_URL"]);
 </div>
 
 <div class="col-md-4 col-md-offset-4" style="margin-bottom: 30px;">
-<?php if ($balance != "0.00"){ 
+<?php if ($balance){ 
 	echo '<div class="row">
 	<form role="form"  id="faucet" class="hidden" novalidate method="POST" >
 	  <div class="form-group">
