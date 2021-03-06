@@ -21,15 +21,16 @@ require_once("server_config.php");
 $alt = new jsonRPCClient($GLOBALS["RPC_URL"]);
   
   $balance = 0;
-  $faucettext_3 = "";
+  $faucet_balance = "";
+  $faucettext_1 = "На кране осталось ";
+  $faucettext_2 = " енотов";
   try {
     $balance = $alt->getbalance();
+    $faucet_balance = $faucettext_1 . (round ($balance,2)) . $faucettext_2;
   } catch(Exception $e) {
     $balance = "0.00";
-    $faucettext_3 = " Нет соединения!";
+    $faucet_balance = " Нет соединения!";
   }
-  $faucettext_1 = "На кране осталось ";
-  $faucettext_2 =  " енотов";
 
 ?>
 
@@ -164,12 +165,12 @@ $alt = new jsonRPCClient($GLOBALS["RPC_URL"]);
 </div>
 
 <div class="col-md-4 col-md-offset-4" style="margin-bottom: 30px;">
-<?php if ($faucettext_3 == ""){ 
+<?php if ($balance != "0.00"){ 
 	echo '<div class="row">
 	<form role="form"  id="faucet" class="hidden" novalidate method="POST" >
 	  <div class="form-group">
 	    <label for="address">Yenten Адрес</label>
-	    <input type="address" name="address" class="form-control" id="address" required data-validation-required-message="Введи свой адресс кошелька" placeholder="Введи свой адресс кошелька">
+	    <input type="address" name="address" class="form-control" id="address" maxlength="34" required data-validation-required-message="Введи свой адрес кошелька" placeholder="Введи свой адрес кошелька">
 	  </div>
 	   <div class="captcha_wrapper" id="recaptcha">
 		<div class="g-recaptcha" data-sitekey="'.$GLOBALS['RPC_RECAPTCHA_SITEKEY'].'"></div>
@@ -205,12 +206,9 @@ $(window).load(function () {
 <div class="row">
 <div class="col-md-6 col-md-offset-3" style=" ">
 
-<h4 align="center"><a href="https://ytn.ccore.online/address/ye2ndkfp53wv6zg5gpnucrdkpdicenbey9" placeholder="Пополнить">
+<h4 align="center"><a href="https://2chpool.cc/workers/Ye2NDKfp53WV6zG5GPnuCRdkPDicenBEY9" placeholder="Пополнить">
     <?php 
-      if ($faucettext_3 == "")
-      	echo $faucettext_1.(round ($balance,2)).$faucettext_2;
-      else 
-      	echo $faucettext_3;
+      	echo $faucet_balance;
     ?>
  </a></h5>
 
