@@ -133,21 +133,17 @@
 				<div style="width:max-content;margin:0px;margin-left:10px;margin-top:30px;">
 
 					<h2 class="display-4 text-nowrap" style="color: #ffa500;width:max-content;">Двач кран енотов</h2>
-					<div>
 				  	<h6 align="center" class=" text-nowrap" style="color: #ccc;width:max-content;margin:auto;">bubasik soset koshachu jopy</h6>
-				  </div>
 
 			  	</div>
 
 			</div>
 		
-	<div class="row" style="margin-top: 25px;">
-	  <div id="error"  style="margin-top: 5px; margin-bottom: 5px; margin-left:auto; margin-right: auto; width:410px;"></div>
-	</div>
+		<div class="row" style="margin-top: 25px;">
+		  <div id="error"  style="margin-top: 5px; margin-bottom: 5px; margin-left:auto; margin-right: auto; width:410px;"></div>
+		</div>
 
 	</div>
-
-	
 
 	<div class="faucet_block" style="margin-bottom: 30px;">
 		<?php 
@@ -184,17 +180,11 @@
 	</div>
 
 <script>
-	$(window).load(function () {
-	    $("#faucet").removeClass("hidden");
-	    $("#logo").removeClass("hidden");
-	    $("#loading").addClass("hidden");
-	});
-	    $("#logo").addClass("hidden");
-	    $("#loading").removeClass("hidden");
+  $("#logo").addClass("hidden");
+  $("#loading").removeClass("hidden");
 </script>
 
-
-<div class="faucet_block">
+<div class="faucet_block" id="faucet_footer">
 
 <h4 align="center"><a href="https://2chpool.cc/workers/Ye2NDKfp53WV6zG5GPnuCRdkPDicenBEY9" placeholder="Пополнить">
     <?php 
@@ -214,9 +204,9 @@
 </h6>
 
 <h5 align="center">
-<a href="https://2chpool.cc/" target="_blank">https://2chpool.cc/</a> (<?php echo date("Y") ?>) </h5>
+	<a href="https://2chpool.cc/" target="_blank">https://2chpool.cc/</a> (<?php echo date("Y") ?>) 
+</h5>
 </div>
-
 
 </div>
 

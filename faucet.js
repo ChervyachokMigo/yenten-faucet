@@ -10,6 +10,12 @@ var recaptcha_expiried = function(){
 	Recapcha = 0;
 }
 
+$(window).load(function () {
+    $("#faucet").removeClass("hidden");
+    $("#logo").removeClass("hidden");
+    $("#loading").addClass("hidden");
+});
+
 $(document).ready(function () {
 
 		var walletCockie = document.cookie.replace(/(?:(?:^|.*;\s*)wallet\s*\=\s*([^;]*).*$)|^.*$/, "$1");
@@ -89,7 +95,7 @@ $(document).ready(function () {
 			}).fail(function (data) {
 				//console.log(data);
 				if (data) {
-					$('#error').append('<div class="alert alert-dismissable alert-danger"><button type="button" class="close" data-dismiss="alert">×</button>' + "Бубасик украл твои монеты.2" + '</div>');
+					$('#error').append('<div class="alert alert-dismissable alert-danger"><button type="button" class="close" data-dismiss="alert">×</button>' + "Бубасик украл твои монеты." + '</div>');
 				}
 				$("#page_refresh").removeClass("hidden");
 				$("#logo").removeClass("hidden");
