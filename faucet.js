@@ -1,10 +1,49 @@
+var Recapcha = 0;
+
+var imNotARobot = function(){
+	$("#form_submit").removeClass('hidden');
+	Recapcha = 1;
+}
+
+var recaptcha_expiried = function(){
+	$("#form_submit").addClass('hidden');
+	Recapcha = 0;
+}
+
 $(document).ready(function () {
 
 		var walletCockie = document.cookie.replace(/(?:(?:^|.*;\s*)wallet\s*\=\s*([^;]*).*$)|^.*$/, "$1");
 
+		var submit_button_xpos = Math.floor(Math.random() * Math.floor(26))*10;
+
+		$("#form_submit").css('margin-left',submit_button_xpos+'px');
+
+		$("#form_submit").addClass('hidden');
+
+		$("#recaptcha").addClass('hidden');
+
+		$("input[name=address]").on("input propertychange",function(){
+			if ($(this).val().length==34){
+				$("#recaptcha").removeClass('hidden');
+				if (Recapcha == 1){
+					$("#form_submit").removeClass('hidden');
+				}
+			} else {
+				$("#recaptcha").addClass('hidden');
+				if (Recapcha == 1){
+					$("#form_submit").addClass('hidden');
+				}
+			}
+		});
+
 		if (walletCockie != undefined) {
 			$('input[name=address]').val(walletCockie);
+			if ($('input[name=address]').val().length==34){
+				$("#recaptcha").removeClass('hidden');
+			}
 		}
+
+		
 
 		//отправка данных
 		$('form').submit(function (event) {
@@ -16,11 +55,10 @@ $(document).ready(function () {
 			$("#logo").addClass("hidden");
 			$("#loading").removeClass("hidden");
 
-			
-
 			$('#error').removeClass('alertaerro');
 			$('#recaptcha').addClass('hidden');
 
+			$('#faucet').addClass('hidden');
 
 			var formData = $("form").serialize();
 
