@@ -3,6 +3,8 @@
 
 Работает в данный момент на: <a href="http://2ch-yenten-faucet.ml">2ch-yenten-faucet.ml</a>
 
+### Последние изменения
+
 * server_config.php - все настрйоки объеденены в один файл.
 
 * убраны баны по ip и wallet
