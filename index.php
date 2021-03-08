@@ -25,9 +25,29 @@
   
   $balance = $RPC->getbalance()->Result;
 
-  if ($balance){
+  function GetTransactionsBalance(){
+    try {
+      $db = new SQLite3('Transactions.db');
+      $db->enableExceptions(true);
+
+      $result = $db->query('SELECT SUM(Amount) FROM Rolls' );
+      $sum_amount = $result->fetchArray();
+      //разлочка базы
+      $db->close();
+    } catch (Exception $e){
+      //что-то не получилось
+      return -1;
+    }
+      return $sum_amount['SUM(Amount)'] / $GLOBALS['DB_COINS_ACCURACCY'];
+  }
+
+  $balanceTransaction = GetTransactionsBalance();
+
+  if ($balance && $balanceTransaction != -1){
+    $balance = $balance - $balanceTransaction;
     $faucet_balance = "На кране осталось " . (round ($balance,3)) . " енотов";
   } else {
+    $balance = 0;
     $faucet_balance = " Нет соединения!";
   }
   ////////////////////////////////////////////
@@ -244,13 +264,13 @@
     }
 
     if ( $number_online == 1 || ($number_online > 20 && $number_online % 10 == 1) ) 
-      echo 'лудоман.';
+      echo 'енотоман.';
     if ( $number_online >= 2 && $number_online <=4 
         || ($number_online > 20 && ($number_online % 10 >= 2 && $number_online % 10 <= 4) ) ) 
-      echo 'лудомана.';
+      echo 'енотомана.';
     if ( $number_online >= 5 && $number_online <=20 
         || ($number_online > 20 && ($number_online % 10 >= 5 && $number_online % 10 <= 9 || $number_online % 10 == 0) ) ) 
-      echo 'лудоманов.';
+      echo 'енотоманов.';
   ?> 
 </h6>
 

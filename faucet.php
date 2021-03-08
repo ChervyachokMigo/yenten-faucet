@@ -1,7 +1,6 @@
 <?php
 require_once("server_config.php");
 
-$GLOBALS['DB_COINS_ACCURACCY'] = 100000;
 $executionTime = (new DateTime())->format('Y-m-d H:i:s');
 
 if (isset($_POST["g-recaptcha-response"])){
@@ -104,9 +103,10 @@ if ($captcha_success->success==false) {
 					try{
 						if ($AddOrPayResults['Sended']==0){
 							$data['boa'] .= "<h6>Отправлено в накопления.<br>" .
-										"Накоплено: <a href=\"http://2ch-yenten-faucet.ml/#\">" . 
+										"Накоплено: <a 
+										title=\"Выигрыши будут выплачены при достижении накоплений в ".$GLOBALS["PAYOUT_LIMIT"]." енотов или при выигрыше.\" href=\"http://2ch-yenten-faucet.ml/#\">" . 
 										round($AddOrPayResults['SumAmount'],2) . 
-										"</a> енотов</h6><br>";
+										"</a> енотов *</h6><br>";
 						} else {
 							if ($AddOrPayResults['Sended']==2) $data['boa'] .= "<h4>Вы выиграли!</h4><br>";
 
