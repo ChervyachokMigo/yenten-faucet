@@ -72,7 +72,7 @@ if ($captcha_success->success==false) {
 
             if($check['isvalid'] == 1){
             	//debug
-	            $payout_yentens = 2.6;
+	         //   $payout_yentens = 2.6;
 
             	//добавляем в базу или выплачиваем
             	$AddOrPayResults = AddOrPayYentens($username, $payout_yentens * $GLOBALS['DB_COINS_ACCURACCY']);
