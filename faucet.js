@@ -3,6 +3,8 @@ var Recapcha = 0;
 var imNotARobot = function(){
 	$("#form_submit").removeClass('hidden');
 	Recapcha = 1;
+	$("#form_submit").disabled = true;
+	setTimeout(function() { $("#form_submit").disabled = false }, 4000);
 }
 
 var recaptcha_expiried = function(){
@@ -33,6 +35,8 @@ $(document).ready(function () {
 				$("#recaptcha").removeClass('hidden');
 				if (Recapcha == 1){
 					$("#form_submit").removeClass('hidden');
+					$("#form_submit").disabled = true;
+					setTimeout(function() { $("#form_submit").disabled = false }, 4000);
 				}
 			} else {
 				$("#recaptcha").addClass('hidden');

@@ -18,19 +18,48 @@
   require_once("BaseJsonRpcClient.php");
   require_once("server_config.php");
   
+  // получение баланса, проверка на подключение к кошельку
   $RPC = new BaseJsonRpcClient($GLOBALS["RPC_URL"]);
   $balance = 0;
   $faucet_balance = "";
-  $faucettext_1 = "На кране осталось ";
-  $faucettext_2 = " енотов";
   
   $balance = $RPC->getbalance()->Result;
 
   if ($balance){
-    $faucet_balance = $faucettext_1 . (round ($balance,3)) . $faucettext_2;
+    $faucet_balance = "На кране осталось " . (round ($balance,3)) . " енотов";
   } else {
     $faucet_balance = " Нет соединения!";
   }
+  ////////////////////////////////////////////
+
+  // Функция: сравнения по времени:
+  // первая больше второй на $seconds, default 5 minutes
+  // timestamp_1 ввести чтобы проверить, что 
+  //         эта дата больше 300(по умолчанию) секунд назад (или 5 минут)
+
+  function CompareTime($timestamp_1, $timestamp_2 = null, $seconds = 300) {
+    if ($timestamp_2 == null) {
+      $timestamp_2 = (new DateTime())->getTimestamp();
+    }
+    return intval( $timestamp_1 >= ($timestamp_2 - $seconds) );  
+  }
+
+  // Проверка онлайна на сайте
+  $number_online = 0;
+
+  $online_db = new SQLite3('Online.db');
+
+  $results_online_db = $online_db->query('SELECT * FROM WalletsOnline');
+    
+  while ($online_db_wallet = $results_online_db->fetchArray()) {
+    if (CompareTime($online_db_wallet['LastActive'])==1){
+      $number_online ++;
+    } else {
+      $online_db->query( 'DELETE FROM WalletsOnline WHERE id='.$online_db_wallet['id'] );
+    }
+  }
+  $online_db->close();
+  ///////////////////////////////////////////
 
 ?>
 
@@ -204,8 +233,31 @@
 </h6>
 
 <h5 align="center">
-	<a href="https://2chpool.cc/" target="_blank">https://2chpool.cc/</a> (<?php echo date("Y") ?>) 
+	<a href="https://2chpool.cc/" target="_blank">https://2chpool.cc/</a> (<?php echo date("Y"); ?>) 
 </h5>
+<h6 align="center">
+  Сейчас на сайте <?php 
+    if ($number_online==0) {
+      echo 'никого.';
+    } else {
+      echo $number_online.' '; 
+    }
+
+    if ( $number_online == 1 || ($number_online > 20 && $number_online % 10 == 1) ) 
+      echo 'лудоман.';
+    if ( $number_online >= 2 && $number_online <=4 
+        || ($number_online > 20 && ($number_online % 10 >= 2 && $number_online % 10 <= 4) ) ) 
+      echo 'лудомана.';
+    if ( $number_online >= 5 && $number_online <=20 
+        || ($number_online > 20 && ($number_online % 10 >= 5 && $number_online % 10 <= 9 || $number_online % 10 == 0) ) ) 
+      echo 'лудоманов.';
+  ?> 
+</h6>
+
+<h6 align="center">
+  * Выигрыши будут выплачены при достижении накоплений в <?php echo $GLOBALS["PAYOUT_LIMIT"]; ?> енотов или при выигрыше.
+</h6>
+
 </div>
 
 </div>
