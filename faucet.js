@@ -1,10 +1,24 @@
 var Recapcha = 0;
 
+ $("#form_submit").attr("disabled", true);
+
+var SubmitButtonTime = 4;
+
 var imNotARobot = function(){
 	$("#form_submit").removeClass('hidden');
 	Recapcha = 1;
-	$("#form_submit").disabled = true;
-	setTimeout(function() { $("#form_submit").disabled = false }, 4000);
+	 $("#form_submit").attr("disabled", true);
+	SubmitButtonTime = 4;
+	$("#form_submit").html('Получить YTN ('+SubmitButtonTime+')'); 
+	var submitTimer = setInterval(function() {  
+		SubmitButtonTime--; 
+		$("#form_submit").html('Получить ('+SubmitButtonTime+')'); 
+		if (SubmitButtonTime<1){
+			$("#form_submit").html('Получить'); 
+			$("#form_submit").attr("disabled", false);
+			clearInterval(submitTimer);
+		}
+	}, 1000);
 }
 
 var recaptcha_expiried = function(){
@@ -35,8 +49,18 @@ $(document).ready(function () {
 				$("#recaptcha").removeClass('hidden');
 				if (Recapcha == 1){
 					$("#form_submit").removeClass('hidden');
-					$("#form_submit").disabled = true;
-					setTimeout(function() { $("#form_submit").disabled = false }, 4000);
+					$("#form_submit").attr("disabled", true);
+					SubmitButtonTime = 4;
+					$("#form_submit").html('Получить YTN ('+SubmitButtonTime+')'); 
+					var submitTimer = setInterval(function() {  
+						SubmitButtonTime--; 
+						$("#form_submit").html('Получить YTN ('+SubmitButtonTime+')'); 
+						if (SubmitButtonTime<1){
+							$("#form_submit").html('Получить YTN'); 
+							$("#form_submit").attr("disabled", false);
+							clearInterval(submitTimer);
+						}
+					}, 1000);
 				}
 			} else {
 				$("#recaptcha").addClass('hidden');
@@ -61,6 +85,7 @@ $(document).ready(function () {
 			document.cookie = "wallet="+$('input[name=address]').val()+";";
 
 			$("#form_submit").addClass("hidden");
+			$("#form_submit").attr("disabled", true);
 
 			$("#logo").addClass("hidden");
 			$("#loading").removeClass("hidden");
