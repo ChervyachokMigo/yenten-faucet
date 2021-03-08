@@ -1,40 +1,38 @@
 <?php
 /*
 Настройки RPC указываются в yenten/data/yenten.conf
-rpcuser=name
-rpcpassword=pass
-stdinrpcpass=pass
+rpcuser=test
+rpcpassword=pasik
+stdinrpcpass=pasik
 rpcallowip=127.0.0.1
 server=1
 daemon=1
 rpcport=9982
 */
-/// Проверить работает ли сервер: 
-//           > yenten-cli.exe help
-////////////////////////////////////////////////////
-///// Настройки RPC сервера из yenten.conf ////////
-$GLOBALS["RPC_CONNECT_NAME"] = "name";
-$GLOBALS["RPC_CONNECT_PASSWORD"] = "pass";
+// Настройки для подключения к серверу
+$GLOBALS["RPC_CONNECT_NAME"] = "";
+$GLOBALS["RPC_CONNECT_PASSWORD"] = "";
 $GLOBALS["RPC_CONNECT_IP"] = "127.0.0.1";
-$GLOBALS["RPC_CONNECT_PORT"] = "9982";
-//////////////////////////////////////////
-///// Пароль от зашифрованого кошелька
-$GLOBALS["WALLET_PASS_PHRASE"] = "";		//оставьте пустую строку - "" если кошелек не зашифрован
-//////////////////////////////////////////
-///// Коды для рекапчи: http://www.google.com/recaptcha/admin
-$GLOBALS['RPC_RECAPTCHA_SITEKEY'] = "12312312312312312312321321321312312312312";
-$GLOBALS['RPC_RECAPTCHA_SECRETKEY'] = '123123123123123123123123-12312312312312';
-//////////////////////////////////////////
-//// Настройки выплат ////////
-$GLOBALS["PAYOUT_MIN"] = 10;						//дефолтный ролл минимум
-$GLOBALS["PAYOUT_MAX"] = 444;					//дефолтный ролл максимум
+$GLOBALS["RPC_CONNECT_PORT"] = "";
+//коды для рекапчи http://www.google.com/recaptcha/admin
+$GLOBALS['RPC_RECAPTCHA_SITEKEY'] = "";
+$GLOBALS['RPC_RECAPTCHA_SECRETKEY'] = '';
+/////////////////////////////////////////////////////////////////////////////////////
+// рейты для гемблинга
+$GLOBALS["PAYOUT_MIN"] = 100;	//100					//дефолтный ролл минимум
+$GLOBALS["PAYOUT_MAX"] = 444;//444					//дефолтный ролл максимум
 $GLOBALS["PAYOUT_AMOUNT_MULTIPLIER"] = 10000;	//чем больше тем меньше
-$GLOBALS["PAYOUT_MULTICAST_MIN"] = 1;			//1-100
-$GLOBALS["PAYOUT_MULTICAST_MAX"] = 6;			//1-100
-$GLOBALS["PAYOUT_LUCKY_CHANCE_CAP"] = 95;		//0-100% 0 - выпадать всегда / 100% - никогда
-$GLOBALS["PAYOUT_LUCKY_MULTIPLIER"] = 2;		//x1-infinity
-$GLOBALS["PAYOUT_RARE_MULTIPLIER"] = 6;			//x1-infinity
-$GLOBALS["PAYOUT_RARE_CHANCE"] = 3;				//0.01-100%
+$GLOBALS["PAYOUT_MULTICAST_MIN"] = 0.2;			//1-100
+$GLOBALS["PAYOUT_MULTICAST_MAX"] = 15.0;			//1-100
+$GLOBALS["PAYOUT_LUCKY_CHANCE_CAP"] = 65;		//0-100% 0 - выпадать всегда / 100% - никогда
+$GLOBALS["PAYOUT_LUCKY_MULTIPLIER"] = 1.9;		//x1-infinity
+$GLOBALS["PAYOUT_RARE_MULTIPLIER"] = 4;			//x1-infinity
+$GLOBALS["PAYOUT_RARE_CHANCE"] = 6;				//0.01-100%
+// Когда выплачивать
+$GLOBALS["PAYOUT_LIMIT"] = 10;					//number of yentens to payout
+$GLOBALS["PAYOUT_AUTOPAY_LIMIT"] = 3;			//если выиграл (больше этого значения), то платим ему всё
+// Пасс фраза для выплаты, если стоит
+$GLOBALS["WALLET_PASS_PHRASE"] = "";		//оставьте пустую строку - "" если кошелек не зашифрован
 
 //////////////////////////////////////////////////////////////////////////////
 ///// Подсчет, не конфигурировать ///////////////////////////////////////////
