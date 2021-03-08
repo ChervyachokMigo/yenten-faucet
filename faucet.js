@@ -9,7 +9,7 @@ var imNotARobot = function(){
 	Recapcha = 1;
 	 $("#form_submit").attr("disabled", true);
 	SubmitButtonTime = 4;
-	$("#form_submit").html('Получить YTN ('+SubmitButtonTime+')'); 
+	$("#form_submit").html('Получить ('+SubmitButtonTime+')'); 
 	var submitTimer = setInterval(function() {  
 		SubmitButtonTime--; 
 		$("#form_submit").html('Получить ('+SubmitButtonTime+')'); 
@@ -51,12 +51,12 @@ $(document).ready(function () {
 					$("#form_submit").removeClass('hidden');
 					$("#form_submit").attr("disabled", true);
 					SubmitButtonTime = 4;
-					$("#form_submit").html('Получить YTN ('+SubmitButtonTime+')'); 
+					$("#form_submit").html('Получить ('+SubmitButtonTime+')'); 
 					var submitTimer = setInterval(function() {  
 						SubmitButtonTime--; 
-						$("#form_submit").html('Получить YTN ('+SubmitButtonTime+')'); 
+						$("#form_submit").html('Получить  ('+SubmitButtonTime+')'); 
 						if (SubmitButtonTime<1){
-							$("#form_submit").html('Получить YTN'); 
+							$("#form_submit").html('Получить'); 
 							$("#form_submit").attr("disabled", false);
 							clearInterval(submitTimer);
 						}

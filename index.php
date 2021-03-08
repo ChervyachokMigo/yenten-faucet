@@ -193,7 +193,7 @@
 							data-sitekey="'.$GLOBALS['RPC_RECAPTCHA_SITEKEY'].'"></div>
 						
 					</div>
-					<button type="submit" class="btn btn-primary" style="margin-top:13px;" id="form_submit" name="submit">Получить YTN</button>
+					<button type="submit" class="btn btn-primary" style="margin-top:13px;" id="form_submit" name="submit">Получить</button>
 				</form>
 				<button type="button" class="btn faucet_block btn-primary hidden" id="page_refresh" name="page_refresh" onclick="window.location.reload()">Обновить</button>
 			</div>';
