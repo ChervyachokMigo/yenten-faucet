@@ -4,7 +4,7 @@ require_once("DB_functions.php");
 
 // проверка капчи
 if (isset($_POST["g-recaptcha-response"])){
-	error_log(strlen($_POST["g-recaptcha-response"]));
+	//error_log(strlen($_POST["g-recaptcha-response"]));
 	if ( strlen($_POST["g-recaptcha-response"]) >0 ){
 
 	  	$response = $_POST["g-recaptcha-response"];
@@ -131,6 +131,9 @@ if ($captcha_success->success==false) {
 										title=\"Выигрыши будут выплачены при достижении накоплений в ".$GLOBALS["PAYOUT_LIMIT"]." енотов или при выигрыше.\" href=\"http://2ch-yenten-faucet.ml/#\">" . 
 										round($AddOrPayResults['SumAmount'],2) . 
 										"</a> енотов *</h6><br>";
+
+							$data['balanceChange'] = $payout_yentens;
+
 						} else {
 							if ($AddOrPayResults['Sended']==2) {
 								$data['boa'] .= "<h4>Вы выиграли!</h4><br>"; }
@@ -170,7 +173,11 @@ if ($captcha_success->success==false) {
 								$data['errors']  = $errors;
 								error_log( "(faucet.php) ERROR: #6 - Transaction Empty by " .  $username . " with " . $AddOrPayResults['SumAmount'] . "\n" );
 				        	}
+
+				        	$data['balanceChange'] = $AddOrPayResults['SumAmount'];
+
 						}
+
 						// отправка успешного сообщения
 						echo json_encode($data);
 
