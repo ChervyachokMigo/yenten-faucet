@@ -61,7 +61,7 @@
   $Transactions_now = GetTransactionsBalance();
   $balanceTransactions = $Transactions_now['SumAmount'];
 
-  echo $balanceTransactions;
+  //echo $balanceTransactions;
   // определение пени с транзакций
   $feeTransactions = $Transactions_now['Count'] * $GLOBALS['FEE_AMOUNT'];
 
