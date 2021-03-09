@@ -3,6 +3,11 @@ require_once("server_config.php");
 require_once("DB_functions.php");
 require_once("BaseJsonRpcClient.php");
 
+// F5 для выполнения одной транзакции
+// не забудь указать пароль password из server_config.php
+// http://127.0.0.1/executeAllPayouts.php?password=qweqweqweq
+
+// проверка валидности пароля
 if (isset($_GET['password'])){
 	if (strlen($_GET['password']) == strlen($GLOBALS["PETUX_PASSWORD"]) ){
 		if (strcmp($_GET['password'], $GLOBALS["PETUX_PASSWORD"]) == 0 ){
@@ -19,6 +24,7 @@ if (isset($_GET['password'])){
 	error_log('executeAllPayouts.php: ERROR #3: not set paassword');
 }
 
+// процедура
 function ExecutePayout(){
     try {
     	$RPC = new BaseJsonRpcClient($GLOBALS["RPC_URL"]);
@@ -31,10 +37,12 @@ function ExecutePayout(){
      	// количество неоплаченных (ошибочных) транзакций
 	    $result_3 = $db->query( 'SELECT ID, Wallet, SumAmount FROM RollsArchive WHERE TransactionID = \'\'' );
 	    $notPayedCount_res = $result_3->fetchArray();
-	    //разлочка базы
+	    
 	    echo "<pre>";
       	print_r($notPayedCount_res);
 		echo "</pre>";
+
+		// сначала проверяем зафейленые транзакции
 	    if ($notPayedCount_res){
 	    	$PayoutWallet = $notPayedCount_res['Wallet'];
 	    	$PayoutAmount = $notPayedCount_res['SumAmount'] / $GLOBALS['DB_COINS_ACCURACCY'];
@@ -74,19 +82,23 @@ function ExecutePayout(){
 	        	error_log( $error_text );
 		        	
 	        }
+	    // выполняем поиск по накопленым монеткам
 	    } else {
-	    	// выполняем поиск по накопленым роллам
-	    	//количество неоплаченых юзеров с накоплениями
+	    	// берем первого кто попался
 	    	$result_2 = $db->query('SELECT DISTINCT Wallet as this FROM Rolls' );
 	    	$CollectionWalletToPayout_res = $result_2->fetchArray();
 	    	
+	    	//если там не ноль, то выполняем 
 	    	if ($CollectionWalletToPayout_res){
+	    		// превращаем переменную в удобный вид
 	    		$PayoutWallet = $CollectionWalletToPayout_res['this'];
-
+	    		// собираем информацию о всех накоплениях, игнорируя лимиты и удаляем записи
 	    		$AddOrPayResults = AddOrPayYentens( $db , $PayoutWallet , 0 , 0 );
 			    
             	if ($AddOrPayResults['error'] == 0){
+
             		$PayoutAmount = $AddOrPayResults['SumAmount'];
+
             		if ($balance > $PayoutAmount){
 	            		// выполняем выплату одной неоплаченой транзакции и занесение айди в базу
 					    if (strlen($GLOBALS["WALLET_PASS_PHRASE"])>0){
@@ -97,10 +109,15 @@ function ExecutePayout(){
 			            if (strlen($GLOBALS["WALLET_PASS_PHRASE"])>0){
 							$RPC->walletlock();	}
 
+						// если транзакция проведена успешно
 						if ($transucktion_id != null || $transucktion_id != ""){
+
+							//добавляем айди транзакции в базу
 			            	$Transaction_error = SetTransactionID( $db , $transucktion_id, $AddOrPayResults['RollArchiveID'] );
+
 				            if ($Transaction_error == 1){
 				            	$error_text = "executeAllPayouts.php: (Collection) ERROR #4 - Can't update RollsArchive and add ". $transucktion_id . " to " . $PayoutWallet . " with ID: ". $AddOrPayResults['RollArchiveID'] . " with amount " . $PayoutAmount . "\n";
+				            	echo $error_text;
 				            	error_log( $error_text );
 				            	
 				            } else {
@@ -131,15 +148,15 @@ function ExecutePayout(){
 	    		error_log( "executeAllPayouts.php: Done. \n" );
 	    	}
 	    }
+
       	//разлочка базы
       	$db->close();
+
     } catch (Exception $e){
       	echo "<pre>";
       	print_r($e);
       	echo "</pre>";
-      	return -1;
     }
-    return 0;
 }
 
 ?>
