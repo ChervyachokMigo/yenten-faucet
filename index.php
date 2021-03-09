@@ -3,7 +3,7 @@
 
 <head>
 	<meta charset="UTF-8">
-	<title>Yenten coin - Yenten-pool.ml Faucet</title>
+	<title>Двач кран енотов - 2ch-yenten-faucet.ml</title>
 	<meta name="robots" content="noindex,nofollow, noodp,noydir"/>
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
@@ -18,11 +18,14 @@
   require_once("BaseJsonRpcClient.php");
   require_once("server_config.php");
   
+  $last_thread_link = 'https://2ch.hk/cc/res/564347.html';
+
   // получение баланса, проверка на подключение к кошельку
   $RPC = new BaseJsonRpcClient($GLOBALS["RPC_URL"]);
   $balance = 0;
   $faucet_balance = "";
   
+  // баланс кошелька
   $balance = $RPC->getbalance()->Result;
 
   function GetTransactionsBalance(){
@@ -30,22 +33,51 @@
       $db = new SQLite3('Transactions.db');
       $db->enableExceptions(true);
 
-      $result = $db->query('SELECT SUM(Amount) FROM Rolls' );
-      $sum_amount = $result->fetchArray();
+      //сумма неоплаченых роллов (накоплено)
+      $result_1 = $db->query('SELECT SUM(Amount) as this FROM Rolls' );
+      $sumAmount_res = $result_1->fetchArray();
+      //количество неоплаченых юзеров с накоплениями
+      $result_2 = $db->query('SELECT COUNT ( DISTINCT Wallet ) as this FROM Rolls' );
+      $countToPayout_res = $result_2->fetchArray();
+      //количество неоплаченных (ошибочных) транзакций
+      $result_3 = $db->query('SELECT COUNT () as this FROM RollsArchive WHERE TransactionID = \'\'' );
+      $notPayedCount_res = $result_3->fetchArray();
+      //сумма неоплаченных (ошибочных) транзакций
+      $result_4 = $db->query('SELECT SUM(SumAmount) as this FROM RollsArchive WHERE TransactionID = \'\'' );
+      $notPayedAmount_res = $result_4->fetchArray();
+      
       //разлочка базы
       $db->close();
     } catch (Exception $e){
       //что-то не получилось
       return -1;
     }
-      return $sum_amount['SUM(Amount)'] / $GLOBALS['DB_COINS_ACCURACCY'];
+      $res['SumAmount'] = ( $sumAmount_res['this'] + $notPayedAmount_res['this'] ) / $GLOBALS['DB_COINS_ACCURACCY'];
+      $res['Count'] = $countToPayout_res['this'] + $notPayedCount_res['this'];
+      return $res;
   }
 
-  $balanceTransaction = GetTransactionsBalance();
+  //определение баланса неоплаченых транзакций
+  $Transactions_now = GetTransactionsBalance();
+  $balanceTransactions = $Transactions_now['SumAmount'];
 
-  if ($balance && $balanceTransaction != -1){
-    $balance = $balance - $balanceTransaction;
-    $faucet_balance = "На кране осталось " . (round ($balance,3)) . " енотов";
+  echo $balanceTransactions;
+  // определение пени с транзакций
+  $feeTransactions = $Transactions_now['Count'] * $GLOBALS['FEE_AMOUNT'];
+
+  // определение баланса, при котором уже не выводить форму
+  $EmptyBalanceAt = ( $all_max / $GLOBALS["PAYOUT_AMOUNT_MULTIPLIER"] + $feeTransactions + $balanceTransactions );
+
+
+  // вывод баланса с учетом неоплаченых выплат
+  if ($balance && $balanceTransactions != -1){
+    $balanceOut = $balance - $balanceTransactions - $feeTransactions;
+    if ($balance > $EmptyBalanceAt ){
+      $faucet_balance = "На кране осталось <div id=\"div_balance\" style=\"display:inline-block\">" . (round ($balanceOut,3)) . "</div> енотов";
+    } else {
+      $balance = 0;
+      $faucet_balance = "На кране не осталось енотов";
+    }
   } else {
     $balance = 0;
     $faucet_balance = " Нет соединения!";
@@ -75,6 +107,7 @@
     if (CompareTime($online_db_wallet['LastActive'])==1){
       $number_online ++;
     } else {
+      // удалить из таблицы онлайна всех, кто не посылал успешные запросы больше 5 минут
       $online_db->query( 'DELETE FROM WalletsOnline WHERE id='.$online_db_wallet['id'] );
     }
   }
@@ -82,7 +115,6 @@
   ///////////////////////////////////////////
 
 ?>
-
 
 <style>
     .faucet-nav {
@@ -161,7 +193,7 @@
 <div class="navbar navbar-inverse navbar-fixed-top faucet-nav" role="navigation">
 	<div class="container">
 		<div class="navbar-header">
-			<a class="navbar-brand" href="http://2ch-yenten-faucet.ml/#">Двач кран енотов</a>
+			<a class="navbar-brand" href=<?php echo '"' . $last_thread_link . '"' ;?> >Двач кран енотов</a>
 		</div>
 	</div>
 </div>
@@ -174,7 +206,7 @@
 				<div style="width:min-content;margin:0px;">
 
 				    <img id="loading" width="150px" height="150px" src="loading.gif"> 
-					<a href="https://2ch.hk/cc/res/559349.html">
+					<a href=<?php echo '"' . $last_thread_link . '"' ;?> >
 						<img width="150px" height="150px" id="logo" src="logo.png" > 
 					</a>
 
@@ -196,7 +228,7 @@
 
 	<div class="faucet_block" style="margin-bottom: 30px;">
 		<?php 
-			if ($balance){ 
+			if ($balance > $EmptyBalanceAt ){ 
 			echo '
 			<div >
 				<form role="form"  id="faucet" class="hidden" novalidate method="POST" style="width:380px;width:fit-content;">
@@ -235,7 +267,7 @@
 
 <div class="faucet_block" id="faucet_footer">
 
-<h4 align="center"><a href="https://2chpool.cc/workers/Ye2NDKfp53WV6zG5GPnuCRdkPDicenBEY9" placeholder="Пополнить">
+<h4 align="center" ><a href="https://2chpool.cc/workers/Ye2NDKfp53WV6zG5GPnuCRdkPDicenBEY9">
     <?php 
       	echo $faucet_balance;
     ?>
@@ -244,10 +276,10 @@
 <h6 align="center">
   <?php     
 
-   $all_max = $all_max / $GLOBALS["PAYOUT_AMOUNT_MULTIPLIER"];
-   $all_min = $all_min / $GLOBALS["PAYOUT_AMOUNT_MULTIPLIER"];
+   $all_max_out = $all_max / $GLOBALS["PAYOUT_AMOUNT_MULTIPLIER"];
+   $all_min_out = $all_min / $GLOBALS["PAYOUT_AMOUNT_MULTIPLIER"];
 
-   echo "Возможные выигрыши: ".$all_min." - ".$all_max." енотов";
+   echo "Возможные выигрыши: ".$all_min_out." - ".$all_max_out." енотов";
 
    ?>
 </h6>

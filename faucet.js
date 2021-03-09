@@ -69,14 +69,14 @@ $(document).ready(function () {
 				}
 			}
 		});
-
-		if (walletCockie != undefined) {
-			$('input[name=address]').val(walletCockie);
-			if ($('input[name=address]').val().length==34){
-				$("#recaptcha").removeClass('hidden');
+		if($('input[name=address]').length) {
+			if (walletCockie != undefined) {
+				$('input[name=address]').val(walletCockie);
+				if ($('input[name=address]').val().length==34){
+					$("#recaptcha").removeClass('hidden');
+				}
 			}
 		}
-
 		
 
 		//отправка данных
@@ -107,16 +107,19 @@ $(document).ready(function () {
 				//console.log(data.errors);
 				if (data.errors) {
 					if (data.errors.human) {
-						$('#error').append('<div class="alert alert-dismissable alert-danger"><button type="button" class="close" data-dismiss="alert">×</button>' + data.errors.human + '</div>');
+						$('#error').append('<div class="alert alert-dismissible  alert-danger"><button type="button" class="close" data-dismiss="alert">×</button>' + data.errors.human + '</div>');
 					}
 					if (data.errors.address) {
-						$('#error').append('<div class="alert alert-dismissable alert-danger"><button type="button" class="close" data-dismiss="alert">×</button>' + data.errors.address + '</div>');
+						$('#error').append('<div class="alert alert-dismissible  alert-danger"><button type="button" class="close" data-dismiss="alert">×</button>' + data.errors.address + '</div>');
 					}
 					if (data.errors.balance) {
-						$('#error').append('<div class="alert alert-dismissable alert-danger"><button type="button" class="close" data-dismiss="alert">×</button>' + data.errors.balance + '</div>');
+						$('#error').append('<div class="alert alert-dismissible  alert-danger"><button type="button" class="close" data-dismiss="alert">×</button>' + data.errors.balance + '</div>');
+					}
+					if (data.errors.transaction) {
+						$('#error').append('<div class="alert alert-dismissible  alert-warning"><button type="button" class="close" data-dismiss="alert">×</button>' + data.boa + '</div>');
 					}
 				} else {
-					$('#error').append('<div class="alert alert-dismissable alert-success"><button type="button" class="close" data-dismiss="alert">×</button><h3>' + data.boa + '</h3></div>');
+					$('#error').append('<div class="alert alert-dismissible  alert-success"><button type="button" class="close" data-dismiss="alert">×</button><h3>' + data.boa + '</h3></div>');
 				}
 				$("#page_refresh").removeClass("hidden");
 				$("#logo").removeClass("hidden");
@@ -124,7 +127,7 @@ $(document).ready(function () {
 			}).fail(function (data) {
 				//console.log(data);
 				if (data) {
-					$('#error').append('<div class="alert alert-dismissable alert-danger"><button type="button" class="close" data-dismiss="alert">×</button>' + "Бубасик украл твои монеты." + '</div>');
+					$('#error').append('<div class="alert alert-dismissible  alert-danger"><button type="button" class="close" data-dismiss="alert">×</button>' + "Бубасик украл твои монеты." + '</div>');
 				}
 				$("#page_refresh").removeClass("hidden");
 				$("#logo").removeClass("hidden");
