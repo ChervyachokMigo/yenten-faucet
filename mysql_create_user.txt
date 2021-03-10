@@ -1,12 +1,11 @@
 mysql -u root -p
 
-CREATE USER '2ch_yenten_faucet'@'127.0.0.1' IDENTIFIED BY 'TkvlQYeUMvqG';
+CREATE USER 'yenten_faucet'@'127.0.0.1' IDENTIFIED BY 'TkvlQYeUMvqG';
 
-GRANT SELECT, DELETE, INSERT ON 2ch_yenten_faucet.walletsonline TO 2ch_yenten_faucet@127.0.0.1;
-
-GRANT SELECT, UPDATE, INSERT ON 2ch_yenten_faucet.rollsarchive TO 2ch_yenten_faucet@127.0.0.1;
-
-GRANT SELECT, DELETE, INSERT ON 2ch_yenten_faucet.rolls TO 2ch_yenten_faucet@127.0.0.1;
+GRANT SELECT, UPDATE, DELETE, INSERT ON 2ch_yenten_faucet.walletsonline TO yenten_faucet@127.0.0.1;
+GRANT SELECT, UPDATE, INSERT ON 2ch_yenten_faucet.rollsarchive TO yenten_faucet@127.0.0.1;
+GRANT SELECT, DELETE, UPDATE, INSERT ON 2ch_yenten_faucet.rolls TO yenten_faucet@127.0.0.1;
 
 FLUSH PRIVILEGES;
+
 
