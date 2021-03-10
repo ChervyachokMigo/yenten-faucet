@@ -30,7 +30,7 @@ $GLOBALS["PETUX_PASSWORD"] = "tAw3ta4lQxU2";
 // настройки mysql
 $GLOBALS['MYSQL_HOST'] = '127.0.0.1';
 $GLOBALS['MYSQL_PORT'] = '3306';
-$GLOBALS['MYSQL_USER'] = '2ch_yenten_faucet';
+$GLOBALS['MYSQL_USER'] = 'yenten_faucet';
 $GLOBALS['MYSQL_PASSWORD'] = 'TkvlQYeUMvqG';
 
 // для хранения в базе - точность целочисленных
