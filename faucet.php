@@ -33,7 +33,7 @@ if (isset($_POST["g-recaptcha-response"])){
 			$captcha_success=json_decode($verify);
 
 		} else {
-			$errors['human'] = 'Неверный адрес.<br>Введите legacy yenten адрес.';
+			$errors['human'] = 'Неверный адрес.<br>Введите legacy Yenten адрес.';
 			$data['errors'] = true;
 			$data['errors']  = $errors;
 			error_log( "(faucet.php) ERROR: #-4 - Incorrect Wallet address. \n" );
@@ -93,112 +93,134 @@ if ($captcha_success->success==false) {
             	//debug
 	            //$payout_yentens = 2.6;
 
-            	//добавляем в базу или выплачиваем если достигнуты лимиты и удаляем с базы, сохраняя запись транзакции
-            	//$AddOrPayResults['SumAmount'] - сколько накоплено или сколько отправляем
-            	//$AddOrPayResults['error'] - проблемы с подключением к базе
-            	//$AddOrPayResults['Sended'] - 0 - накапливаем, 1 - выплачиваем из-за лимитов, 2 - выплачиваем, потому что выиграли
-            	$db = new SQLite3('Transactions.db');
-				$db->enableExceptions(true);
-            	$AddOrPayResults = AddOrPayYentens( $db , $username , $payout_yentens * $GLOBALS['DB_COINS_ACCURACCY'] );
+				// соединение с базой
+  				$db = mysqli_connect( $GLOBALS['MYSQL_HOST'].":".$GLOBALS['MYSQL_PORT'] , $GLOBALS['MYSQL_USER'] , $GLOBALS['MYSQL_PASSWORD'] );
 
-            	if ($AddOrPayResults['error'] == 0) {
-	            	//записываем юзера в онлайн базу на 5 минут
-	            	SetWalletOnline($username);
-	            	
-	            	//подготавливаем вывод в клиент
-					$data['success'] = true;
-					$data['boa'] = 	'Вы получили <a href="http://2ch-yenten-faucet.ml/#">' . 
-									round($payout_yentens,4) . 
-									"</a> енотов!<br>" .
-									"Выпало: " . $roll . "<br>" . 
-									"Мультикаст: " . round($multi,1) . "x<br>" .
-									"Удача: " . $chance . "%";
+  				if ($db->connect_error) {
+  					error_log('Ошибка подключения (' . $db->connect_errno . ') '. $db->connect_error);
+  				}
 
-					if ($lucky_multi>1) {
-						$data['boa'] .= " (x" . $lucky_multi . "!)";
-					}
+  				if ( $db != false ) {
+  					if ( ! mysqli_select_db( $db , $GLOBALS['MYSQL_DB'] ) ){
+				        error_log("DB not found");
+				        die("DB not found");
+				    }
 
-					$data['boa'] .='<br>';
+				    //добавляем в базу или выплачиваем если достигнуты лимиты и удаляем с базы, сохраняя запись транзакции
+	            	//$AddOrPayResults['SumAmount'] - сколько накоплено или сколько отправляем
+	            	//$AddOrPayResults['error'] - проблемы с подключением к базе
+	            	//$AddOrPayResults['Sended'] - 0 - накапливаем, 1 - выплачиваем из-за лимитов, 2 - выплачиваем, потому что выиграли
+	            	$AddOrPayResults = AddOrPayYentens( $db , $username , $payout_yentens * $GLOBALS['DB_COINS_ACCURACCY'] );
 
-					if ($isRare == 1){
-						$data['boa'] .= "Невероятная удача!!! (х" . $rare_multiplier . ") <br>";
-					}
+	            	if ($AddOrPayResults['error'] == 0) {
+		            	//записываем юзера в онлайн базу на 5 минут
+		            	SetWalletOnline( $db, $username );
+		            	
+		            	//подготавливаем вывод в клиент
+						$data['success'] = true;
+						$data['boa'] = 	'Вы получили <a href="http://2ch-yenten-faucet.ml/#">' . 
+										round($payout_yentens,4) . 
+										"</a> енотов!<br>" .
+										"Выпало: " . $roll . "<br>" . 
+										"Мультикаст: " . round($multi,1) . "x<br>" .
+										"Удача: " . $chance . "%";
 
-					try{
-						if ($AddOrPayResults['Sended']==0){
-							$data['boa'] .= "<h6>Отправлено в накопления.<br>" .
-										"Накоплено: <a 
-										title=\"Выигрыши будут выплачены при достижении накоплений в ".$GLOBALS["PAYOUT_LIMIT"]." енотов или при выигрыше.\" href=\"http://2ch-yenten-faucet.ml/#\">" . 
-										round($AddOrPayResults['SumAmount'],2) . 
-										"</a> енотов *</h6><br>";
-
-							$data['balanceChange'] = $payout_yentens;
-
-						} else {
-							if ($AddOrPayResults['Sended']==2) {
-								$data['boa'] .= "<h4>Вы выиграли!</h4><br>"; }
-
-							// отсылаем монеты на адрес
-			        	   
-			        	    if (strlen($GLOBALS["WALLET_PASS_PHRASE"])>0){
-			        			$e1 = $RPC->walletpassphrase( $GLOBALS["WALLET_PASS_PHRASE"], 60 ); }
-			        		
-			                $transucktion_id = $RPC->sendtoaddress($username, $AddOrPayResults['SumAmount'])->Result;
-
-			                if (strlen($GLOBALS["WALLET_PASS_PHRASE"])>0){
-								$RPC->walletlock();	}
-							
-							//записываем в базу отправленные монеты
-							if ($transucktion_id != null || $transucktion_id != "") {
-
-				                $Transaction_error = SetTransactionID( $db , $transucktion_id , $AddOrPayResults['RollArchiveID'] );
-
-				                if ($Transaction_error == 1){
-				                	$errors['human'] = 'Бубасик украл твои монеты.';
-									$data['errors'] = true;
-									$data['errors']  = $errors;
-									error_log( "(faucet.php) ERROR: #5 - Can't Set Transaction ID ". $transucktion_id . " by " .  $username . "\n" );
-				                } else {
-				                	$data['boa'] .= "<h4>Выплачено <a href=\"https://ytn.ccore.online/transaction/utxo/".  
-											$transucktion_id ."\">" . round($AddOrPayResults['SumAmount'],2) . 
-											"</a> енотов!</h4><br>";
-				        			error_log( "(faucet.php) SUCCESS: Pay to " . $username . 
-				        				" yentens " . $AddOrPayResults['SumAmount'] . 
-				        				" transaction: " . $transucktion_id . "\n" );
-				        		}
-				        	} else {	//если транзакция зафейлилась
-				        		$data['boa'] .= "<h4>Будет выплачено <a href=\"http://2ch-yenten-faucet.ml/#\">" . round($AddOrPayResults['SumAmount'],2) . "</a> енотов в ручном режиме.</h4><br><h6>Не удалось провести транзакцию.</h6><br>";
-								$errors['transaction'] = 'Не удалось провести транзакцию.';
-								$data['errors'] = true;
-								$data['errors']  = $errors;
-								error_log( "(faucet.php) ERROR: #6 - Transaction Empty by " .  $username . " with " . $AddOrPayResults['SumAmount'] . "\n" );
-				        	}
-
-				        	$data['balanceChange'] = $AddOrPayResults['SumAmount'];
-
+						if ($lucky_multi>1) {
+							$data['boa'] .= " (x" . $lucky_multi . "!)";
 						}
 
-						// отправка успешного сообщения
-						echo json_encode($data);
+						$data['boa'] .='<br>';
 
-					// если произошла ошибка с подключением к кошельку
-					} catch (Exception $e){
-						$errors['human'] = 'Бубасик украл твои монеты.';
+						if ($isRare == 1){
+							$data['boa'] .= "Невероятная удача!!! (х" . $rare_multiplier . ") <br>";
+						}
+
+						try{
+							if ($AddOrPayResults['Sended']==0){
+								$data['boa'] .= "<h6>Отправлено в накопления.<br>" .
+											"Накоплено: <a 
+											title=\"Выигрыши будут выплачены при достижении накоплений в ".$GLOBALS["PAYOUT_LIMIT"]." енотов или при выигрыше.\" href=\"http://2ch-yenten-faucet.ml/#\">" . 
+											round($AddOrPayResults['SumAmount'],2) . 
+											"</a> енотов *</h6><br>";
+
+								$data['balanceChange'] = $payout_yentens;
+
+							} else {
+								if ($AddOrPayResults['Sended']==2) {
+									$data['boa'] .= "<h4>Вы выиграли!</h4><br>"; }
+
+								// отсылаем монеты на адрес
+				        	   
+				        	    if (strlen($GLOBALS["WALLET_PASS_PHRASE"])>0){
+				        			$e1 = $RPC->walletpassphrase( $GLOBALS["WALLET_PASS_PHRASE"], 60 ); }
+				        		
+				                $transucktion_id = $RPC->sendtoaddress($username, $AddOrPayResults['SumAmount'])->Result;
+
+				                if (strlen($GLOBALS["WALLET_PASS_PHRASE"])>0){
+									$RPC->walletlock();	}
+								
+								//записываем в базу отправленные монеты
+								if ($transucktion_id != null || $transucktion_id != "") {
+
+					                $Transaction_error = SetTransactionID( $db , $transucktion_id , $AddOrPayResults['RollArchiveID'] );
+
+					                if ($Transaction_error == 1){
+					                	$errors['human'] = 'Бубасик украл твои монеты.';
+										$data['errors'] = true;
+										$data['errors']  = $errors;
+										error_log( "(faucet.php) ERROR: #5 - Can't Set Transaction ID ". $transucktion_id . " by " .  $username . "\n" );
+					                } else {
+					                	$data['boa'] .= "<h4>Выплачено <a href=\"https://ytn.ccore.online/transaction/utxo/".  
+												$transucktion_id ."\">" . round($AddOrPayResults['SumAmount'],2) . 
+												"</a> енотов!</h4><br>";
+					        			error_log( "(faucet.php) SUCCESS: Pay to " . $username . 
+					        				" yentens " . $AddOrPayResults['SumAmount'] . 
+					        				" transaction: " . $transucktion_id . "\n" );
+					        		}
+					        	} else {	//если транзакция зафейлилась
+					        		$data['boa'] .= "<h4>Будет выплачено <a href=\"http://2ch-yenten-faucet.ml/#\">" . round($AddOrPayResults['SumAmount'],2) . "</a> енотов в ручном режиме.</h4><br><h6>Не удалось провести транзакцию.</h6><br>";
+									$errors['transaction'] = 'Не удалось провести транзакцию.';
+									$data['errors'] = true;
+									$data['errors']  = $errors;
+									error_log( "(faucet.php) ERROR: #6 - Transaction Empty by " .  $username . " with " . $AddOrPayResults['SumAmount'] . "\n" );
+					        	}
+
+					        	$data['balanceChange'] = $AddOrPayResults['SumAmount'];
+
+							}
+
+							// отправка успешного сообщения
+							echo json_encode($data);
+
+						// если произошла ошибка с подключением к кошельку
+						} catch (Exception $e){
+							$errors['human'] = 'Бубасик украл твои монеты.';
+							$data['errors'] = true;
+							$data['errors']  = $errors;
+							error_log( "(faucet.php) ERROR: #4 - Can't Send ". $payout_yentens . " Yentens to " .  $username . "\n" );
+							echo json_encode($data);
+						}
+
+
+					// что-то напуталось в базе данных
+					} else {
+						$errors['human'] = 'Лупа и Пупа пошли получать зарплату. В бухгалтерии все перепутали. В итоге, Лупа получил за Пупу, а Пупа за Лупу!';
 						$data['errors'] = true;
 						$data['errors']  = $errors;
-						error_log( "(faucet.php) ERROR: #4 - Can't Send ". $payout_yentens . " Yentens to " .  $username . "\n" );
+						error_log( "(faucet.php) ERROR: #3 - Can't connect to DB to add or backup payout ". $payout_yentens . " Yentens to " .  $username . "\n" );
 						echo json_encode($data);
 					}
-				// что-то напуталось в базе данных
+
+					mysqli_close ($db);
+					$db = null;
 				} else {
 					$errors['human'] = 'Лупа и Пупа пошли получать зарплату. В бухгалтерии все перепутали. В итоге, Лупа получил за Пупу, а Пупа за Лупу!';
-					$data['errors'] = true;
-					$data['errors']  = $errors;
-					error_log( "(faucet.php) ERROR: #3 - Can't connect to DB to add or backup payout ". $payout_yentens . " Yentens to " .  $username . "\n" );
-					echo json_encode($data);
+						$data['errors'] = true;
+						$data['errors']  = $errors;
+						error_log( "(faucet.php) ERROR: #3 - Can't connect to DB to add or backup payout ". $payout_yentens . " Yentens to " .  $username . "\n" );
+						echo json_encode($data);
 				}
-				//разлочка базы
-      			$db->close();
+				
       		// валидация адреса кошелька не пройдена
 			} else {
             		$errors['address'] = 'Неправильный адрес.';
@@ -217,18 +239,30 @@ if ($captcha_success->success==false) {
       	}
     // конец: кран не пустой
     }	
+    $RPC = null;
+    $check = null;
+
+    $errors = null;
+    $data = null;
 // end capcha success=true
 }	
 
+
+
 // записываем юзера в онлайн базу на 5 минут, проверяются при каждом обновлении главной
-function SetWalletOnline($Wallet){
+function SetWalletOnline( &$db_online , $Wallet){
 	$Wallet = '"'.$Wallet.'"';
-	$db_online = new SQLite3('Online.db');
 	$date_now = new DateTime();
-	$db_online->query('
-    REPLACE INTO WalletsOnline ( Wallet, LastActive) 
-    VALUES ( '.$Wallet.', '.($date_now->getTimestamp()).') ' );
-    $db_online->close();
+
+	$query = $db_online->query( "SELECT Wallet, LastActive FROM walletsonline WHERE `Wallet` = " . $Wallet );
+	$result = $query->fetch_array(MYSQLI_ASSOC);
+	$num = mysqli_num_rows($query);
+	if($num) {
+		$db_online->query("UPDATE walletsonline SET LastActive = " . ($date_now->getTimestamp()) . " WHERE Wallet = ". $Wallet );
+	} else {
+		$db_online->query('INSERT INTO walletsonline ( Wallet, LastActive ) 
+    	VALUES ( '.$Wallet.', '.($date_now->getTimestamp()).') ');
+	}
 }
 
 

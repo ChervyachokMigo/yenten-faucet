@@ -28,91 +28,149 @@
   // баланс кошелька
   $balance = $RPC->getbalance()->Result;
 
-  function GetTransactionsBalance(){
-    try {
-      $db = new SQLite3('Transactions.db');
-      $db->enableExceptions(true);
+  $RPC = null;
 
-      //сумма неоплаченых роллов (накоплено)
-      $result_1 = $db->query('SELECT SUM(Amount) as this FROM Rolls' );
-      $sumAmount_res = $result_1->fetchArray();
-      //количество неоплаченых юзеров с накоплениями
-      $result_2 = $db->query('SELECT COUNT ( DISTINCT Wallet ) as this FROM Rolls' );
-      $countToPayout_res = $result_2->fetchArray();
-      //количество неоплаченных (ошибочных) транзакций
-      $result_3 = $db->query('SELECT COUNT () as this FROM RollsArchive WHERE TransactionID = \'\'' );
-      $notPayedCount_res = $result_3->fetchArray();
-      //сумма неоплаченных (ошибочных) транзакций
-      $result_4 = $db->query('SELECT SUM(SumAmount) as this FROM RollsArchive WHERE TransactionID = \'\'' );
-      $notPayedAmount_res = $result_4->fetchArray();
-      
-      //разлочка базы
-      $db->close();
-    } catch (Exception $e){
-      //что-то не получилось
-      return -1;
-    }
-      $res['SumAmount'] = ( $sumAmount_res['this'] + $notPayedAmount_res['this'] ) / $GLOBALS['DB_COINS_ACCURACCY'];
-      $res['Count'] = $countToPayout_res['this'] + $notPayedCount_res['this'];
-      return $res;
+
+  // соединение с базой
+  $db = mysqli_connect( $GLOBALS['MYSQL_HOST'].":".$GLOBALS['MYSQL_PORT'] , $GLOBALS['MYSQL_USER'] , $GLOBALS['MYSQL_PASSWORD'] );
+
+  if ($db->connect_error) {
+    error_log('(index.php) Ошибка подключения (' . $db->connect_errno . ') '. $db->connect_error);
   }
 
-  //определение баланса неоплаченых транзакций
-  $Transactions_now = GetTransactionsBalance();
-  $balanceTransactions = $Transactions_now['SumAmount'];
+  if ($db){
 
-  //echo $balanceTransactions;
-  // определение пени с транзакций
-  $feeTransactions = $Transactions_now['Count'] * $GLOBALS['FEE_AMOUNT'];
+      if ( ! mysqli_select_db( $db , $GLOBALS['MYSQL_DB'] ) ){
+        error_log("DB not found");
+        die("DB not found");
+      }
 
-  // определение баланса, при котором уже не выводить форму
-  $EmptyBalanceAt = ( $all_max / $GLOBALS["PAYOUT_AMOUNT_MULTIPLIER"] + $feeTransactions + $balanceTransactions );
+      //определение баланса неоплаченых транзакций
+      $Transactions_now = GetTransactionsBalance( $db );
 
+      if ($Transactions_now != -1) {
+        $balanceTransactions = $Transactions_now['SumAmount'];
 
-  // вывод баланса с учетом неоплаченых выплат
-  if ($balance && $balanceTransactions != -1){
-    $balanceOut = $balance - $balanceTransactions - $feeTransactions;
-    if ($balance > $EmptyBalanceAt ){
-      $faucet_balance = "На кране осталось <div id=\"div_balance\" style=\"display:inline-block\">" . (round ($balanceOut,3)) . "</div> енотов";
-    } else {
-      $balance = 0;
-      $faucet_balance = "На кране не осталось енотов";
-    }
-  } else {
-    $balance = 0;
-    $faucet_balance = " Нет соединения!";
+        //echo $balanceTransactions;
+        // определение пени с транзакций
+        $feeTransactions = $Transactions_now['Count'] * $GLOBALS['FEE_AMOUNT'];
+
+        // определение баланса, при котором уже не выводить форму
+        $EmptyBalanceAt = ( $all_max / $GLOBALS["PAYOUT_AMOUNT_MULTIPLIER"] + $feeTransactions + $balanceTransactions );
+
+        // вывод баланса с учетом неоплаченых выплат
+        if ($balance && $balanceTransactions != -1){
+          $balanceOut = $balance - $balanceTransactions - $feeTransactions;
+          if ($balance > $EmptyBalanceAt ){
+            $faucet_balance = "На кране осталось <div id=\"div_balance\" style=\"display:inline-block\">" . (round ($balanceOut,3)) . "</div> енотов **";
+          } else {
+            $balance = 0;
+            $faucet_balance = "На кране не осталось енотов **";
+          }
+        } else {
+          $balance = 0;
+          $faucet_balance = "Раздача закончена!";
+        }
+
+         // Проверка онлайна на сайте
+        $number_online = 0;
+
+        $results_online_db = mysqli_query( $db , 'SELECT * FROM walletsonline' );
+          
+        if ($results_online_db) {
+          while ( $online_db_wallet = mysqli_fetch_array( $results_online_db, MYSQLI_ASSOC ) ) {
+            if ( CompareTime( $online_db_wallet['LastActive'] ) == 1 ){
+              $number_online ++;
+            } else {
+              // удалить из таблицы онлайна всех, кто не посылал успешные запросы больше 5 минут
+              mysqli_query( $db , 'DELETE FROM walletsonline WHERE ID = '.$online_db_wallet['ID'] );
+            }
+          }
+          
+          mysqli_free_result($results_online_db);
+          $online_db_wallet = null;
+      }
+
+        ///////////////////////////////////////////
+
+      } else {
+        $EmptyBalanceAt = 1;
+        $balance = 0;
+        $faucet_balance = "На кране не осталось енотов **";
+
+        $number_online = 0;
+      }
   }
-  ////////////////////////////////////////////
 
-  // Функция: сравнения по времени:
-  // первая больше второй на $seconds, default 5 minutes
-  // timestamp_1 ввести чтобы проверить, что 
-  //         эта дата больше 300(по умолчанию) секунд назад (или 5 минут)
+/////////////// функции ////////////////
 
-  function CompareTime($timestamp_1, $timestamp_2 = null, $seconds = 300) {
-    if ($timestamp_2 == null) {
-      $timestamp_2 = (new DateTime())->getTimestamp();
-    }
-    return intval( $timestamp_1 >= ($timestamp_2 - $seconds) );  
-  }
-
-  // Проверка онлайна на сайте
-  $number_online = 0;
-
-  $online_db = new SQLite3('Online.db');
-
-  $results_online_db = $online_db->query('SELECT * FROM WalletsOnline');
+function GetTransactionsBalance(&$db){
+  try {
+    //сумма неоплаченых роллов (накоплено)
+    $result_1 = mysqli_query( $db , 'SELECT SUM(Amount) as this FROM rolls' );
     
-  while ($online_db_wallet = $results_online_db->fetchArray()) {
-    if (CompareTime($online_db_wallet['LastActive'])==1){
-      $number_online ++;
+    if ($result_1) {
+      $sumAmount_res = mysqli_fetch_array($result_1 , MYSQLI_ASSOC);
+      mysqli_free_result($result_1);
     } else {
-      // удалить из таблицы онлайна всех, кто не посылал успешные запросы больше 5 минут
-      $online_db->query( 'DELETE FROM WalletsOnline WHERE id='.$online_db_wallet['id'] );
+      $sumAmount_res['this'] = 0;
     }
+
+    //количество неоплаченых юзеров с накоплениями
+    $result_2 = mysqli_query( $db , 'SELECT COUNT ( DISTINCT Wallet ) as this FROM rolls' );
+    if ($result_2) {
+      $countToPayout_res = mysqli_fetch_array($result_2 , MYSQLI_ASSOC);
+      mysqli_free_result($result_2);
+    } else {
+      $countToPayout_res['this'] = 0;
+    }
+
+    //количество неоплаченных (ошибочных) транзакций
+    $result_3 = mysqli_query( $db , 'SELECT COUNT () as this FROM rollsarchive WHERE TransactionID = \'\'' );
+    if ($result_3) {
+      $notPayedCount_res = mysqli_fetch_array($result_3 , MYSQLI_ASSOC);
+      mysqli_free_result($result_3);
+    } else {
+      $notPayedCount_res['this'] = 0;
+    }
+
+    //сумма неоплаченных (ошибочных) транзакций
+    $result_4 = mysqli_query( $db , 'SELECT SUM(SumAmount) as this FROM rollsarchive WHERE TransactionID = \'\'' );
+    if ($result_4) {
+      $notPayedAmount_res = mysqli_fetch_array($result_4 , MYSQLI_ASSOC);
+      mysqli_free_result($result_4);
+    } else {
+      $notPayedAmount_res['this'] = 0;
+    }
+
+  } catch (Exception $e){
+    //что-то не получилось
+    return -1;
+
+  } catch (mysqli_sql_exception $e) {
+     // throw $e;
+    return -1;
+
   }
-  $online_db->close();
-  ///////////////////////////////////////////
+
+    $res['SumAmount'] = ( $sumAmount_res['this'] + $notPayedAmount_res['this'] ) / $GLOBALS['DB_COINS_ACCURACCY'];
+    $res['Count'] = $countToPayout_res['this'] + $notPayedCount_res['this'];
+
+    return $res;
+
+}
+
+// Функция: сравнения по времени:
+// первая больше второй на $seconds, default 5 minutes
+// timestamp_1 ввести чтобы проверить, что 
+//         эта дата больше 300(по умолчанию) секунд назад (или 5 минут)
+
+function CompareTime($timestamp_1, $timestamp_2 = null, $seconds = 300) {
+  if ($timestamp_2 == null) {
+    $timestamp_2 = (new DateTime())->getTimestamp();
+  }
+  return intval( $timestamp_1 >= ($timestamp_2 - $seconds) );  
+}
 
 ?>
 
@@ -214,7 +272,7 @@
 				<div style="width:max-content;margin:0px;margin-left:10px;margin-top:30px;">
 
 					<h2 class="display-4 text-nowrap" style="color: #ffa500;width:max-content;">Двач кран енотов</h2>
-				  	<h6 align="center" class=" text-nowrap" style="color: #ccc;width:max-content;margin:auto;">bubasik soset koshachu jopy</h6>
+				  	<h6 align="center" class=" text-nowrap" style="color: #ccc;width:max-content;margin:auto;">тестинг</h6>
 
 			  	</div>
 
@@ -228,35 +286,40 @@
 
 	<div class="faucet_block" style="margin-bottom: 30px;">
 		<?php 
-			if ($balance > $EmptyBalanceAt ){ 
-			echo '
-			<div >
-				<form role="form"  id="faucet" class="hidden" novalidate method="POST" style="width:380px;width:fit-content;">
-					<div id="adress_block" style="width:380px;margin-bottom: 15px;" >
-						<label for="address">Yenten Адрес</label>
-						<input type="address" name="address" class="form-control" id="address" 
-							maxlength="34" required 
-							placeholder="Введи свой адрес кошелька">
-					</div>
-					<div class="captcha_wrapper" id="recaptcha">
-						<div class="g-recaptcha" 
-							data-callback="imNotARobot"
-							data-expired-callback="recaptcha_expiried"
-							data-sitekey="'.$GLOBALS['RPC_RECAPTCHA_SITEKEY'].'"></div>
-						
-					</div>
-					<button type="submit" class="btn btn-primary" style="margin-top:13px;" id="form_submit" name="submit">Получить</button>
-				</form>
-				<button type="button" class="btn faucet_block btn-primary hidden" id="page_refresh" name="page_refresh" onclick="window.location.reload()">Обновить</button>
-			</div>';
+
+			if ( $db && $balance > $EmptyBalanceAt ){ 
+  			echo '
+  			<div >
+  				<form role="form"  id="faucet" class="hidden" novalidate method="POST" style="width:380px;width:fit-content;">
+  					<div id="adress_block" style="width:380px;margin-bottom: 15px;" >
+  						<label for="address">Yenten Адрес</label>
+  						<input type="address" name="address" class="form-control" id="address" 
+  							maxlength="34" required 
+  							placeholder="Введи свой адрес кошелька">
+  					</div>
+  					<div class="captcha_wrapper" id="recaptcha">
+  						<div class="g-recaptcha" 
+  							data-callback="imNotARobot"
+  							data-expired-callback="recaptcha_expiried"
+  							data-sitekey="'.$GLOBALS['RPC_RECAPTCHA_SITEKEY'].'"></div>
+  						
+  					</div>
+  					<button type="submit" class="btn btn-primary" style="margin-top:13px;" id="form_submit" name="submit">Получить</button>
+  				</form>
+  				<button type="button" class="btn faucet_block btn-primary hidden" id="page_refresh" name="page_refresh" onclick="window.location.reload()">Обновить</button>
+  			</div>';
+
 			} else {
+
 				echo '  <div class="faucet_block" style="">
 							<img style="width: 256px; " id="loading" src="noconnection.gif">
 						</div>';
 				echo '	<div class="faucet_block refresh_button_2" style="margin-top: 30px;">
 							<button type="button" class="btn btn-primary" id="page_refresh_2" name="page_refresh_2" onclick="window.location.reload()">Обновить</button>
 						</div>';
+
 			}
+
 		?>
 	</div>
 
@@ -289,12 +352,11 @@
 </h5>
 <h6 align="center">
   Сейчас на сайте <?php 
-    if ($number_online==0) {
+    if (!$db || $number_online==0) {
       echo 'никого.';
     } else {
       echo $number_online.' '; 
-    }
-
+    
     if ( $number_online == 1 || ($number_online > 20 && $number_online % 10 == 1) ) 
       echo 'енотоман.';
     if ( $number_online >= 2 && $number_online <=4 
@@ -303,6 +365,7 @@
     if ( $number_online >= 5 && $number_online <=20 
         || ($number_online > 20 && ($number_online % 10 >= 5 && $number_online % 10 <= 9 || $number_online % 10 == 0) ) ) 
       echo 'енотоманов.';
+    }
   ?> 
 </h6>
 
@@ -310,11 +373,17 @@
   * Выигрыши будут выплачены при достижении накоплений в <?php echo $GLOBALS["PAYOUT_LIMIT"]; ?> енотов или при выигрыше.
 </h6>
 
+<h6 align="center">
+  ** Когда закончится баланс, накопления и ошибки будут обработаны в ручном режиме, спустя какое-то время!
+</h6>
+
 </div>
 
 </div>
 
 <script src="faucet.js?random=<?php echo time(); ?>"></script>
+
+<?php if ($db) mysqli_close ($db) ?>
 
 </body>
 

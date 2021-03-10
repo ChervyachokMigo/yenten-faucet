@@ -7,7 +7,7 @@ function SetTransactionID( &$db_id, $id, $row_id){
 	// подготовка
 	$id_tosql = "'".$id."'";
 	
-	$db_id->query('UPDATE RollsArchive SET TransactionID = ' . $id_tosql . ' WHERE `ID` = \''. $row_id .'\'' );
+	$db_id->query('UPDATE rollsarchive SET TransactionID = ' . $id_tosql . ' WHERE `ID` = \''. $row_id .'\'' );
 
 	} catch (Exception $e){
 		//что-то не получилось
@@ -30,15 +30,18 @@ function AddOrPayYentens( &$db_id , $Wallet, $payout_amount = 0, $use_limits = 1
 	}
 
 	//получаем все роллы с базы по номеру кошелька
-	$sum_amount_result = $db_id->query( 'SELECT Amount,ID FROM Rolls WHERE Wallet = ' . $Wallet_tosql );
+	$sum_amount_result = $db_id->query( 'SELECT Amount,ID FROM rolls WHERE Wallet = ' . $Wallet_tosql );
 
 	//суммируем роллы
 	$IDs = Array();
 	$SumAmount = 0;
-	while ($rolls_amount = $sum_amount_result->fetchArray()) {
-		$IDs[] = $rolls_amount['ID'];
-		$SumAmount += $rolls_amount['Amount']; 
-	}
+	if ($sum_amount_result) {
+		while ($rolls_amount = $sum_amount_result->fetch_array(MYSQLI_ASSOC)) {
+			$IDs[] = $rolls_amount['ID'];
+			$SumAmount += $rolls_amount['Amount']; 
+		}
+      mysqli_free_result($sum_amount_result);
+    }
 
 	//превращаем роллы в вид йентенов из целочисленного
 	$SumAmount_sql = $SumAmount;
@@ -55,18 +58,23 @@ function AddOrPayYentens( &$db_id , $Wallet, $payout_amount = 0, $use_limits = 1
 	}
 
 	if ( $isNeedPayout || $isWinner ){
-		$Delete_IDs = implode(',', $IDs);
 		// Бекап
 		$Time_now = (new DateTime())->getTimestamp();
 		$db_id->query('
-		    INSERT INTO RollsArchive ( Wallet, SumAmount, TransactionTimestamp ) 
+		    INSERT INTO rollsarchive ( Wallet, SumAmount, TransactionTimestamp ) 
 		    VALUES ( ' . $Wallet_tosql . ', '.$SumAmount_sql.', ' . $Time_now . ') ' );
-		$LastID_result = $db_id->query('SELECT last_insert_rowid() as ID');
-		$LastID_result_2 = $LastID_result->fetchArray();
-		$result['RollArchiveID'] = $LastID_result_2['ID'];
+		$LastID_result = $db_id->query('SELECT LAST_INSERT_ID() as ID');
 		
+		if ($LastID_result) {
+			$LastID_result_2 = $LastID_result->fetch_array(MYSQLI_ASSOC);
+			$result['RollArchiveID'] = $LastID_result_2['ID'];
+	      	mysqli_free_result($LastID_result);
+	    }
 		// Удаление
-		$db_id->query('DELETE FROM Rolls WHERE ID in(' . $Delete_IDs . ')');
+		if ( count($IDs) > 0 ){
+			$Delete_IDs = implode(',', $IDs);
+			$db_id->query('DELETE FROM rolls WHERE ID in(' . $Delete_IDs . ')');
+		}
 	} else {
 		// Накапливаем
 		$result['Sended'] = 0;
