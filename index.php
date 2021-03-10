@@ -272,7 +272,7 @@ function CompareTime($timestamp_1, $timestamp_2 = null, $seconds = 300) {
 				<div style="width:max-content;margin:0px;margin-left:10px;margin-top:30px;">
 
 					<h2 class="display-4 text-nowrap" style="color: #ffa500;width:max-content;">Двач кран енотов</h2>
-				  	<h6 align="center" class=" text-nowrap" style="color: #ccc;width:max-content;margin:auto;">тестинг</h6>
+				  	<h6 align="center" class=" text-nowrap" style="color: #ccc;width:max-content;margin:auto;">бетатест</h6>
 
 			  	</div>
 
@@ -301,12 +301,21 @@ function CompareTime($timestamp_1, $timestamp_2 = null, $seconds = 300) {
   						<div class="g-recaptcha" 
   							data-callback="imNotARobot"
   							data-expired-callback="recaptcha_expiried"
-  							data-sitekey="'.$GLOBALS['RPC_RECAPTCHA_SITEKEY'].'"></div>
+  							data-sitekey="i_love_potato"></div>
   						
   					</div>
-  					<button type="submit" class="btn btn-primary" style="margin-top:13px;" id="form_submit" name="submit">Получить</button>
-  				</form>
-  				<button type="button" class="btn faucet_block btn-primary hidden" id="page_refresh" name="page_refresh" onclick="window.location.reload()">Обновить</button>
+  					<button type="submit" class="btn btn-primary hidden" style="margin-top:13px;" value="1" id="form_submit_2" name="submit">Получить</button>
+            </form>';
+
+            $randomButton = random_int(1,9);
+
+            echo '<input type="hidden" value="'.$randomButton.'" id="checkRandomButton">';
+
+            for ($i = 1; $i<10; $i++){
+              echo '<button type="button" class="btn btn-primary hidden submit-btn" style="margin-top:13px;" value="'.$i.'" name="get">Получить</button>';
+            }
+
+  				echo'<button type="button" class="btn faucet_block btn-primary hidden" id="page_refresh" name="page_refresh" onclick="window.location.reload()">Обновить</button>
   			</div>';
 
 			} else {
@@ -326,6 +335,7 @@ function CompareTime($timestamp_1, $timestamp_2 = null, $seconds = 300) {
 <script>
   $("#logo").addClass("hidden");
   $("#loading").removeClass("hidden");
+  $("#recaptcha > div").attr('data-sitekey', <?php echo "'".$GLOBALS['RPC_RECAPTCHA_SITEKEY']."'"; ?> );
 </script>
 
 <div class="faucet_block" id="faucet_footer">
@@ -376,12 +386,15 @@ function CompareTime($timestamp_1, $timestamp_2 = null, $seconds = 300) {
 <h6 align="center">
   ** Когда закончится баланс, накопления и ошибки будут обработаны в ручном режиме, спустя какое-то время!
 </h6>
+  <div id="player"></div>
 
 </div>
 
 </div>
+
 
 <script src="faucet.js?random=<?php echo time(); ?>"></script>
+
 
 <?php if ($db) mysqli_close ($db) ?>
 
