@@ -1,9 +1,9 @@
 <?php
 /*
 Настройки RPC указываются в yenten/data/yenten.conf
-rpcuser=test
-rpcpassword=pasik
-stdinrpcpass=pasik
+rpcuser=user
+rpcpassword=pass
+stdinrpcpass=pass
 rpcallowip=127.0.0.1
 server=1
 daemon=1
