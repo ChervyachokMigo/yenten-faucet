@@ -75,8 +75,8 @@ if ($captcha_success->success==false) {
     include 'calc.php';
     
     $check = $RPC->validateaddress($username)->Result;
-
-	if($RPC->getbalance()->Result < $payout_yentens){
+    $WalletBalance = $RPC->getbalance()->Result;
+	if($WalletBalance < $payout_yentens){
 		$errors['balance'] = 'Кран пуст.';
 		$data['errors'] = true;
 		$data['errors']  = $errors;
@@ -96,10 +96,6 @@ if ($captcha_success->success==false) {
 				// соединение с базой
   				$db = mysqli_connect( $GLOBALS['MYSQL_HOST'].":".$GLOBALS['MYSQL_PORT'] , $GLOBALS['MYSQL_USER'] , $GLOBALS['MYSQL_PASSWORD'] );
 
-  				if ($db->connect_error) {
-  					error_log('Ошибка подключения (' . $db->connect_errno . ') '. $db->connect_error);
-  				}
-
   				if ( $db != false ) {
   					if ( ! mysqli_select_db( $db , $GLOBALS['MYSQL_DB'] ) ){
 				        error_log("DB not found");
@@ -107,6 +103,24 @@ if ($captcha_success->success==false) {
 				    }
 
 				    if ( CheckOnlineTime( $db, $username ) !=0 ){
+
+				    	// дополнение калькулешена 
+				    	$OnlineHumansMultiplier = GetHumansNumberMultiplier($db);
+						$payout_yentens = $payout_yentens * $OnlineHumansMultiplier;
+
+						$CaptchaMultiplier = GetCaptchaMultiplier($db , $username);
+						$payout_yentens = $payout_yentens * $CaptchaMultiplier;
+
+						// вторая проверка баланса потому что я даун
+						if($WalletBalance < $payout_yentens){
+							$errors['balance'] = 'Кран пуст.';
+							$data['errors'] = true;
+							$data['errors']  = $errors;
+							error_log( "(faucet.php) ERROR: #0 - no balance. \n" );
+							echo json_encode($data);
+				  			die;
+				  		}
+
 
 					    //добавляем в базу или выплачиваем если достигнуты лимиты и удаляем с базы, сохраняя запись транзакции
 		            	//$AddOrPayResults['SumAmount'] - сколько накоплено или сколько отправляем
@@ -124,8 +138,13 @@ if ($captcha_success->success==false) {
 											round($payout_yentens,4) . 
 											"</a> енотов!<br>" .
 											"Выпало: " . $roll . "<br>" . 
-											"Мультикаст: " . round($multi,1) . "x<br>" .
-											"Удача: " . $chance . "%";
+											"Мультикаст: " . round($multi,1) . "x<br>";
+
+							if ($isRare == 1){
+								$data['boa'] .= "Невероятная удача!!! (х" . $rare_multiplier . ") <br>";
+							}
+
+							$data['boa'] .= "Удача: " . $chance . '%';
 
 							if ($lucky_multi>1) {
 								$data['boa'] .= " (x" . $lucky_multi . "!)";
@@ -133,9 +152,7 @@ if ($captcha_success->success==false) {
 
 							$data['boa'] .='<br>';
 
-							if ($isRare == 1){
-								$data['boa'] .= "Невероятная удача!!! (х" . $rare_multiplier . ") <br>";
-							}
+							$data['boa'] .= "<h6>Бонус за капчи: x".round($CaptchaMultiplier,3)."</h6>";
 
 							try{
 								if ($AddOrPayResults['Sended']==0){
@@ -247,7 +264,7 @@ if ($captcha_success->success==false) {
 			echo json_encode($data);
       	}
     // конец: кран не пустой
-    }	
+    }
     $RPC = null;
     $check = null;
 
@@ -255,38 +272,6 @@ if ($captcha_success->success==false) {
     $data = null;
 // end capcha success=true
 }	
-
-
-
-// записываем юзера в онлайн базу на 5 минут, проверяются при каждом обновлении главной
-function SetWalletOnline( &$db_online , $Wallet){
-	$Wallet = '"'.$Wallet.'"';
-	$date_now = new DateTime();
-
-	$query = $db_online->query( "SELECT ID FROM walletsonline WHERE `Wallet` = " . $Wallet );
-	$num = mysqli_num_rows($query);
-	if($num) {
-		$db_online->query("UPDATE walletsonline SET LastActive = " . ($date_now->getTimestamp()) . " WHERE Wallet = ". $Wallet );
-	} else {
-		$db_online->query('INSERT INTO walletsonline ( Wallet, LastActive ) 
-    	VALUES ( '.$Wallet.', '.($date_now->getTimestamp()).') ');
-	}
-}
-
-function CheckOnlineTime( &$db_online, $Wallet ) {
-	$Wallet = '"'.$Wallet.'"';
-	$date_now = new DateTime();
-
-	$query = $db_online->query( "SELECT Wallet, LastActive FROM walletsonline WHERE `Wallet` = " . $Wallet );
-	$result = $query->fetch_array(MYSQLI_ASSOC);
-	$num = mysqli_num_rows($query);
-	if($num) {
-		if ( ( ( $date_now->getTimestamp() ) - $result['LastActive'] ) <=5 ) {
-			return 0;
-		}
-	} 
-	return 1;
-}
 
 
 ?>

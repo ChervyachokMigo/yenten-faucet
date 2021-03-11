@@ -16,8 +16,9 @@
 
 <?php
   require_once("BaseJsonRpcClient.php");
-  require_once("server_config.php");
-  
+  require_once("server_config.php");  
+  require_once("DB_functions.php");
+
   $last_thread_link = 'https://2ch.hk/cc/res/564347.html';
 
   // получение баланса, проверка на подключение к кошельку
@@ -73,24 +74,8 @@
         }
 
          // Проверка онлайна на сайте
-        $number_online = 0;
 
-        $results_online_db = mysqli_query( $db , 'SELECT * FROM walletsonline' );
-          
-        if ($results_online_db) {
-          while ( $online_db_wallet = mysqli_fetch_array( $results_online_db, MYSQLI_ASSOC ) ) {
-            if ( CompareTime( $online_db_wallet['LastActive'] ) == 1 ){
-              $number_online ++;
-            } else {
-              // удалить из таблицы онлайна всех, кто не посылал успешные запросы больше 5 минут
-              mysqli_query( $db , 'DELETE FROM walletsonline WHERE ID = '.$online_db_wallet['ID'] );
-            }
-          }
-          
-          mysqli_free_result($results_online_db);
-          $online_db_wallet = null;
-      }
-
+        $number_online = GetOnlineCount( $db , 0 );
         ///////////////////////////////////////////
 
       } else {
@@ -102,75 +87,6 @@
       }
   }
 
-/////////////// функции ////////////////
-
-function GetTransactionsBalance(&$db){
-  try {
-    //сумма неоплаченых роллов (накоплено)
-    $result_1 = mysqli_query( $db , 'SELECT SUM(Amount) as this FROM rolls' );
-    
-    if ($result_1) {
-      $sumAmount_res = mysqli_fetch_array($result_1 , MYSQLI_ASSOC);
-      mysqli_free_result($result_1);
-    } else {
-      $sumAmount_res['this'] = 0;
-    }
-
-    //количество неоплаченых юзеров с накоплениями
-    $result_2 = mysqli_query( $db , 'SELECT COUNT ( DISTINCT Wallet ) as this FROM rolls' );
-    if ($result_2) {
-      $countToPayout_res = mysqli_fetch_array($result_2 , MYSQLI_ASSOC);
-      mysqli_free_result($result_2);
-    } else {
-      $countToPayout_res['this'] = 0;
-    }
-
-    //количество неоплаченных (ошибочных) транзакций
-    $result_3 = mysqli_query( $db , 'SELECT COUNT () as this FROM rollsarchive WHERE TransactionID = \'\'' );
-    if ($result_3) {
-      $notPayedCount_res = mysqli_fetch_array($result_3 , MYSQLI_ASSOC);
-      mysqli_free_result($result_3);
-    } else {
-      $notPayedCount_res['this'] = 0;
-    }
-
-    //сумма неоплаченных (ошибочных) транзакций
-    $result_4 = mysqli_query( $db , 'SELECT SUM(SumAmount) as this FROM rollsarchive WHERE TransactionID = \'\'' );
-    if ($result_4) {
-      $notPayedAmount_res = mysqli_fetch_array($result_4 , MYSQLI_ASSOC);
-      mysqli_free_result($result_4);
-    } else {
-      $notPayedAmount_res['this'] = 0;
-    }
-
-  } catch (Exception $e){
-    //что-то не получилось
-    return -1;
-
-  } catch (mysqli_sql_exception $e) {
-     // throw $e;
-    return -1;
-
-  }
-
-    $res['SumAmount'] = ( $sumAmount_res['this'] + $notPayedAmount_res['this'] ) / $GLOBALS['DB_COINS_ACCURACCY'];
-    $res['Count'] = $countToPayout_res['this'] + $notPayedCount_res['this'];
-
-    return $res;
-
-}
-
-// Функция: сравнения по времени:
-// первая больше второй на $seconds, default 5 minutes
-// timestamp_1 ввести чтобы проверить, что 
-//         эта дата больше 300(по умолчанию) секунд назад (или 5 минут)
-
-function CompareTime($timestamp_1, $timestamp_2 = null, $seconds = 300) {
-  if ($timestamp_2 == null) {
-    $timestamp_2 = (new DateTime())->getTimestamp();
-  }
-  return intval( $timestamp_1 >= ($timestamp_2 - $seconds) );  
-}
 
 ?>
 
@@ -272,7 +188,7 @@ function CompareTime($timestamp_1, $timestamp_2 = null, $seconds = 300) {
 				<div style="width:max-content;margin:0px;margin-left:10px;margin-top:30px;">
 
 					<h2 class="display-4 text-nowrap" style="color: #ffa500;width:max-content;">Двач кран енотов</h2>
-				  	<h6 align="center" class=" text-nowrap" style="color: #ccc;width:max-content;margin:auto;">бетатест</h6>
+				  	<h6 align="center" class=" text-nowrap" style="color: #ccc;width:max-content;margin:auto;">Добро пожаловать, снова.</h6>
 
 			  	</div>
 
@@ -363,19 +279,21 @@ function CompareTime($timestamp_1, $timestamp_2 = null, $seconds = 300) {
 <h6 align="center">
   Сейчас на сайте <?php 
     if (!$db || $number_online==0) {
-      echo 'никого.';
+      echo 'никого (x1.00)';
     } else {
       echo $number_online.' '; 
     
-    if ( $number_online == 1 || ($number_online > 20 && $number_online % 10 == 1) ) 
-      echo 'енотоман.';
-    if ( $number_online >= 2 && $number_online <=4 
-        || ($number_online > 20 && ($number_online % 10 >= 2 && $number_online % 10 <= 4) ) ) 
-      echo 'енотомана.';
-    if ( $number_online >= 5 && $number_online <=20 
-        || ($number_online > 20 && ($number_online % 10 >= 5 && $number_online % 10 <= 9 || $number_online % 10 == 0) ) ) 
-      echo 'енотоманов.';
+      if ( $number_online == 1 || ($number_online > 20 && $number_online % 10 == 1) ) 
+        echo 'енотоман ';
+      if ( $number_online >= 2 && $number_online <=4 
+          || ($number_online > 20 && ($number_online % 10 >= 2 && $number_online % 10 <= 4) ) ) 
+        echo 'енотомана ';
+      if ( $number_online >= 5 && $number_online <=20 
+          || ($number_online > 20 && ($number_online % 10 >= 5 && $number_online % 10 <= 9 || $number_online % 10 == 0) ) ) 
+        echo 'енотоманов ';
+      echo '(x' . round(GetHumansNumberMultiplier($db) , 3 ) . ')';
     }
+   
   ?> 
 </h6>
 

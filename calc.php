@@ -51,131 +51,164 @@ if ($isDebug == 0 || $isDebug == 1){
     $chance = $chance * $rare_multiplier;
 
 	$payout_yentens = $amount / $GLOBALS["PAYOUT_AMOUNT_MULTIPLIER"];
+
 	//// end calculation
 	//// continue debug calculation
     if ($isDebug == 1){
-		if ( $payout_yentens * $GLOBALS["PAYOUT_AMOUNT_MULTIPLIER"] <=  $all_max || 
-			$payout_yentens * $GLOBALS["PAYOUT_AMOUNT_MULTIPLIER"] >= $all_min ){
 
-			$payout_average = $payout_average + $payout_yentens;
+    	$PasswordValid = 0;
 
-			$payout_yentens *= $GLOBALS["PAYOUT_AMOUNT_MULTIPLIER"];
-			if (round($payout_yentens,4)<$all_max/100){
-				$out[1]++;
-			}
-			if (round($payout_yentens,4)>=$all_max/100 && round($payout_yentens,4)<$all_max/50){
-				$out[2]++;
-			}
-			if (round($payout_yentens,4)>=$all_max/50 && round($payout_yentens,4)<$all_max/40){
-				$out[3]++;
-			}
-			if (round($payout_yentens,4)>=$all_max/40 && round($payout_yentens,4)<$all_max/30){
-				$out[4]++;
-			}
-			if (round($payout_yentens,4)>=$all_max/30 && round($payout_yentens,4)<$all_max/20){
-				$out[5]++;
-			}
-			if (round($payout_yentens,4)>=$all_max/20 && round($payout_yentens,4)<$all_max/10){
-				$out[6]++;
-			}
-			if (round($payout_yentens,4)>=$all_max/10 && round($payout_yentens,4)<$all_max/5){
-				$out[7]++;
-			}
-			if (round($payout_yentens,4)>=$all_max/5 && round($payout_yentens,4)<$all_max/2){
-				$out[8]++;
-			}
-			if (round($payout_yentens,4)>=$all_max/2 && round($payout_yentens,4)<=$all_max){
-				$out[9]++;
-			}
+    	if (isset($_GET['password'])){
+			if (strlen($_GET['password']) == strlen($GLOBALS["PETUX_PASSWORD"]) ){
+				if (strcmp($_GET['password'], $GLOBALS["PETUX_PASSWORD"]) == 0 ){
 
-			if (round($payout_yentens,4)>=$GLOBALS["PAYOUT_AMOUNT_MULTIPLIER"] &&
-				round($payout_yentens,4)<$GLOBALS["PAYOUT_AMOUNT_MULTIPLIER"]*2 ){
-				$out["1 ytn"]++;
-			}
-			if (round($payout_yentens,4)>=$GLOBALS["PAYOUT_AMOUNT_MULTIPLIER"]*2 &&
-				round($payout_yentens,4)<$GLOBALS["PAYOUT_AMOUNT_MULTIPLIER"]*3 ){
-				$out["2 ytn"]++;
-			}
-			if (round($payout_yentens,4)<=($GLOBALS["PAYOUT_AMOUNT_MULTIPLIER"]/10 )){
-				$out["01 ytn"]++;
-			}
-			if (round($payout_yentens,4)>=$GLOBALS["PAYOUT_AMOUNT_MULTIPLIER"]/10  &&
-				round($payout_yentens,4)<$GLOBALS["PAYOUT_AMOUNT_MULTIPLIER"] ){
-				$out["011 ytn"]++;
-			}
-			if (round($payout_yentens,4)>=$GLOBALS["PAYOUT_AMOUNT_MULTIPLIER"]/10  &&
-				round($payout_yentens,4)<$GLOBALS["PAYOUT_AMOUNT_MULTIPLIER"]/5 ){
-				$out["0105 ytn"]++;
-			}
-			if (round($payout_yentens,4)>=$GLOBALS["PAYOUT_AMOUNT_MULTIPLIER"]/5  &&
-				round($payout_yentens,4)<$GLOBALS["PAYOUT_AMOUNT_MULTIPLIER"] ){
-				$out["051 ytn"]++;
-			}
-			if (round($payout_yentens,4)>=$GLOBALS["PAYOUT_AMOUNT_MULTIPLIER"]*3 &&
-				round($payout_yentens,4)<$GLOBALS["PAYOUT_AMOUNT_MULTIPLIER"]*4 ){
-				$out["3 ytn"]++;
-			}
-			if (round($payout_yentens,4)>=$GLOBALS["PAYOUT_AMOUNT_MULTIPLIER"]*4 ){
-				$out["4 ytn"]++;
-			}
+					$PasswordValid = 1;
 
-			$out_all++;
-
-			if ($lucky_multi == 1){
-				$out["lucky_1"]++;
-			} else {
-				$out["lucky_2"]++;
-			}
-			if ($rare_multiplier == 1){
-				$out["rare_1"]++;
-			} else {
-				$out["rare_2"]++;
+				} else {
+					error_log('calc.php: ERROR #1: Password incorrect (value)');
+				}
+			} else{
+				error_log('calc.php: ERROR #2: Password incorrect (length)');
 			}
 		} else {
-	  		$out["errors"]++;
+			error_log('calc.php: ERROR #3: not set paassword');
 		}
 
-		// end debug calculation and loop
-		$DebugAccuracy--;
-		if ($DebugAccuracy>0){
-			goto debugloop;
+		if ($PasswordValid == 1){
+
+			if ( $payout_yentens * $GLOBALS["PAYOUT_AMOUNT_MULTIPLIER"] <=  $all_max || 
+				$payout_yentens * $GLOBALS["PAYOUT_AMOUNT_MULTIPLIER"] >= $all_min ){
+
+				$payout_average = $payout_average + $payout_yentens;
+
+				$payout_yentens *= $GLOBALS["PAYOUT_AMOUNT_MULTIPLIER"];
+
+				//$all_max = $all_max_without_captcha_online;
+
+				if (round($payout_yentens,4)<$all_max/100){
+					$out[1]++;
+				}
+				if (round($payout_yentens,4)>=$all_max/100 && round($payout_yentens,4)<$all_max/50){
+					$out[2]++;
+				}
+				if (round($payout_yentens,4)>=$all_max/50 && round($payout_yentens,4)<$all_max/40){
+					$out[3]++;
+				}
+				if (round($payout_yentens,4)>=$all_max/40 && round($payout_yentens,4)<$all_max/30){
+					$out[4]++;
+				}
+				if (round($payout_yentens,4)>=$all_max/30 && round($payout_yentens,4)<$all_max/20){
+					$out[5]++;
+				}
+				if (round($payout_yentens,4)>=$all_max/20 && round($payout_yentens,4)<$all_max/10){
+					$out[6]++;
+				}
+				if (round($payout_yentens,4)>=$all_max/10 && round($payout_yentens,4)<$all_max/5){
+					$out[7]++;
+				}
+				if (round($payout_yentens,4)>=$all_max/5 && round($payout_yentens,4)<$all_max/2){
+					$out[8]++;
+				}
+				if (round($payout_yentens,4)>=$all_max/2 && round($payout_yentens,4)<=$all_max){
+					$out[9]++;
+				}
+
+				if (round($payout_yentens,4)>=$GLOBALS["PAYOUT_AMOUNT_MULTIPLIER"] &&
+					round($payout_yentens,4)<$GLOBALS["PAYOUT_AMOUNT_MULTIPLIER"]*2 ){
+					$out["1 ytn"]++;
+				}
+				if (round($payout_yentens,4)>=$GLOBALS["PAYOUT_AMOUNT_MULTIPLIER"]*2 &&
+					round($payout_yentens,4)<$GLOBALS["PAYOUT_AMOUNT_MULTIPLIER"]*3 ){
+					$out["2 ytn"]++;
+				}
+				if (round($payout_yentens,4)<=($GLOBALS["PAYOUT_AMOUNT_MULTIPLIER"]/10 )){
+					$out["01 ytn"]++;
+				}
+				if (round($payout_yentens,4)>=$GLOBALS["PAYOUT_AMOUNT_MULTIPLIER"]/10  &&
+					round($payout_yentens,4)<$GLOBALS["PAYOUT_AMOUNT_MULTIPLIER"] ){
+					$out["011 ytn"]++;
+				}
+				if (round($payout_yentens,4)>=$GLOBALS["PAYOUT_AMOUNT_MULTIPLIER"]/10  &&
+					round($payout_yentens,4)<$GLOBALS["PAYOUT_AMOUNT_MULTIPLIER"]/5 ){
+					$out["0105 ytn"]++;
+				}
+				if (round($payout_yentens,4)>=$GLOBALS["PAYOUT_AMOUNT_MULTIPLIER"]/5  &&
+					round($payout_yentens,4)<$GLOBALS["PAYOUT_AMOUNT_MULTIPLIER"] ){
+					$out["051 ytn"]++;
+				}
+				if (round($payout_yentens,4)>=$GLOBALS["PAYOUT_AMOUNT_MULTIPLIER"]*3 &&
+					round($payout_yentens,4)<$GLOBALS["PAYOUT_AMOUNT_MULTIPLIER"]*4 ){
+					$out["3 ytn"]++;
+				}
+				if (round($payout_yentens,4)>=$GLOBALS["PAYOUT_AMOUNT_MULTIPLIER"]*4 ){
+					$out["4 ytn"]++;
+				}
+
+				if (round($payout_yentens,4)>=$GLOBALS["PAYOUT_AMOUNT_MULTIPLIER"]*0.75 ){
+					$out["075"]++;
+				}
+
+				$out_all++;
+
+				if ($lucky_multi == 1){
+					$out["lucky_1"]++;
+				} else {
+					$out["lucky_2"]++;
+				}
+				if ($rare_multiplier == 1){
+					$out["rare_1"]++;
+				} else {
+					$out["rare_2"]++;
+				}
+			} else {
+		  		$out["errors"]++;
+			}
+
+			// end debug calculation and loop
+			$DebugAccuracy--;
+			if ($DebugAccuracy>0){
+				goto debugloop;
+			}
+			$payout_average = $payout_average / $DebugLoopTries;
+			// debug output
+
+			//// single output
+			//echo "pay ".($payout_yentens/$GLOBALS["PAYOUT_AMOUNT_MULTIPLIER"]);
+			//echo "<br>roll ".$payout_yentens;
+
+
+
+			echo "<br>amount ".$GLOBALS["PAYOUT_AMOUNT_MULTIPLIER"];
+			echo "<br>max ".$all_max;
+			echo "<br>min ".$all_min;
+
+			echo "<br>";
+			echo "1: ".($out[1]/$out_all*100).'%'."<br>";
+			echo "2: ".($out[2]/$out_all*100).'%'."<br>";
+			echo "3: ".($out[3]/$out_all*100).'%'."<br>";
+			echo "4: ".($out[4]/$out_all*100).'%'."<br>";
+			echo "5: ".($out[5]/$out_all*100).'%'."<br>";
+			echo "6: ".($out[6]/$out_all*100).'%'."<br>";
+			echo "7: ".($out[7]/$out_all*100).'%'."<br>";
+			echo "8: ".($out[8]/$out_all*100).'%'."<br>";
+			echo "9: ".($out[9]/$out_all*100).'%'."<br>";
+			echo "0.75: ".($out["075"]/$out_all*100).'%'."<br>";
+			echo "win on:".$GLOBALS["PAYOUT_AUTOPAY_LIMIT_MIN"].' YTN'."<br>";
+			echo "win on max rates:".$GLOBALS["PAYOUT_AUTOPAY_LIMIT_MIN"] * $GLOBALS["PAYOUT_CAPTCHA_MAX_MULTIPLIER"] * $GLOBALS["PAYOUT_MAX_MULTIPLIER_PER_HUMAN"].' YTN'."<br>";
+			echo "less than 0.1 ytn: ".($out["01 ytn"]/$out_all*100).'%'."<br>";
+			echo "0.1 - 1: ".($out["011 ytn"]/$out_all*100).'%'."<br>";
+			echo "0.1 - 0.5: ".($out["0105 ytn"]/$out_all*100).'%'."<br>";
+			echo "0.5 - 1: ".($out["051 ytn"]/$out_all*100).'%'."<br>";
+			echo "more than 1 ytn: ".($out["1 ytn"]/$out_all*100).'%'."<br>";
+			echo "more than 2 ytn: ".($out["2 ytn"]/$out_all*100).'%'."<br>";
+			echo "more than 3 ytn: ".($out["3 ytn"]/$out_all*100).'%'."<br>";
+			echo "more than 4 ytn: ".($out["4 ytn"]/$out_all*100).'%'."<br>";
+			echo "lucky chance ".($out["lucky_2"]/$out["lucky_1"]*100).'%'."<br>";
+
+			echo "<pre>";
+			print_r($out);
+			echo "</pre>";
 		}
-		$payout_average = $payout_average / $DebugLoopTries;
-		// debug output
-
-		//// single output
-		//echo "pay ".($payout_yentens/$GLOBALS["PAYOUT_AMOUNT_MULTIPLIER"]);
-		//echo "<br>roll ".$payout_yentens;
-
-
-
-		echo "<br>amount ".$GLOBALS["PAYOUT_AMOUNT_MULTIPLIER"];
-		echo "<br>max ".$all_max;
-		echo "<br>min ".$all_min;
-
-		echo "<br>";
-		echo "1: ".($out[1]/$out_all*100).'%'."<br>";
-		echo "2: ".($out[2]/$out_all*100).'%'."<br>";
-		echo "3: ".($out[3]/$out_all*100).'%'."<br>";
-		echo "4: ".($out[4]/$out_all*100).'%'."<br>";
-		echo "5: ".($out[5]/$out_all*100).'%'."<br>";
-		echo "6: ".($out[6]/$out_all*100).'%'."<br>";
-		echo "7: ".($out[7]/$out_all*100).'%'."<br>";
-		echo "8: ".($out[8]/$out_all*100).'%'."<br>";
-		echo "9: ".($out[9]/$out_all*100).'%'."<br>";
-		echo "less than 0.1 ytn: ".($out["01 ytn"]/$out_all*100).'%'."<br>";
-		echo "0.1 - 1: ".($out["011 ytn"]/$out_all*100).'%'."<br>";
-		echo "0.1 - 0.5: ".($out["0105 ytn"]/$out_all*100).'%'."<br>";
-		echo "0.5 - 1: ".($out["051 ytn"]/$out_all*100).'%'."<br>";
-		echo "more than 1 ytn: ".($out["1 ytn"]/$out_all*100).'%'."<br>";
-		echo "more than 2 ytn: ".($out["2 ytn"]/$out_all*100).'%'."<br>";
-		echo "more than 3 ytn: ".($out["3 ytn"]/$out_all*100).'%'."<br>";
-		echo "more than 4 ytn: ".($out["4 ytn"]/$out_all*100).'%'."<br>";
-		echo "lucky chance ".($out["lucky_2"]/$out["lucky_1"]*100).'%'."<br>";
-
-		echo "<pre>";
-		print_r($out);
-		echo "</pre>";
 	}//end debug
 
 } else {
