@@ -91,84 +91,211 @@
 ?>
 
 <style>
+
+
     .faucet-nav {
-        text-shadow: 0 1px 1px rgba(0,0,0,.3);
-        box-shadow: 0 1px 0 rgba(255,165,0,.2);
-        background-color: #00a2e8;
-        border-color: #ffa500;
-        
+      background-color: #00a2e8;
+      border-color: #ffa500;
     }
+
     .btn{
     	background-color: #00a2e8;
     	width: 124px;
-
     }
+
     .btn:hover,.btn:focus{
     	color:white;
-    	background: #0202da;
-    	font-weight: bold;
-    	
+    	background: #00a2e8;
     }
+
     .dropdown-menu>li>a, .dropdown, .faucet-nav .navbar-nav>.active>a, .faucet-nav .navbar-nav>.active>a:hover {
-        color: #ffa500;
-        background-color: #DDD;
-        
+      color: #ffa500;
+      background-color: #DDD;
     }
-     .dropdown-menu{
-        background-color: #DDD;
-        box-shadow: 0 1px 1px rgba(255,165,0,.2);
-     }
-     .dropdown-menu>li>a:hover {
-       background-color: #CCC;
-      color: #000;
-      }
+
+    .dropdown-menu{
+      background-color: #DDD;
+    }
+
     .dropdown open {
       background-color: #DDD;
       color: #ffa500;
     }
-    .faucet-nav .navbar-nav>li>a {
-        color: #ffa500;
-    }
+
     .faucet-nav .navbar-brand {
-        color: #FF8C00;
+      color: #ffa500;
     }
+
     div.hidden
     {
-       display: none
+      display: none
     }
 
     .alert {
     	margin-bottom: 0px;
     }
+
     .alert-success {
     	background-color: #DDD;
     }
-    a{
+
+    a {
     	outline:0;
     	color: #ff6600;
     	text-decoration:none !important;
     }
-    a:visited{
+
+    a:visited {
     	color: #ff6600;
     }
-    a:active, a:hover{
+
+    a:active, a:hover {
     	color: #a74300;
     }
 
-    .faucet_block{
+    .faucet_block {
     	margin-left:auto; 
     	margin-right: auto; 
     	margin-top: 15px;
     	width:fit-content;
     }
+
+    .dropdown-toggle {
+      color:#ff6600;
+    }
+
+    .navbar-collapse {
+      width:850px;
+    }
+
+    .navbar-collapse.in {
+      overflow-y: visible;
+    }
+    
+    .headcontainer1 {
+      margin:auto;
+      width:850px;
+    }
+
+    .navbar-header {
+      margin-left:0px;
+      text-shadow: 0.5px 0.5px 1px rgba(0,0,0,1);
+    }
+
+    .navbar-header>a:hover {
+      color:#a74300;
+    }
+
+    .dropdown-menu>a {
+      background-color: #EAEAEA;
+      width:100%;
+      color: #ff6600;
+    }
+
+    .dropdown-menu {
+      z-index: 1001;
+      background-color: #EAEAEA;
+      width:max-content;
+      text-shadow: none;
+    }
+
+    a.btn-head {
+      text-shadow: 0.5px 0.5px 1px rgba(0,0,0,1);
+      color: #ffa500;
+      background: #00a2e8;
+      border: 0px;
+    }
+
+    .btn-head {
+      text-shadow: 0.5px 0.5px 1px rgba(0,0,0,1);
+      color: #ffa500;
+      background: #00a2e8;
+      border: 0px;
+    }
+
+    .btn-head:focus, .btn-head:hover {
+      color: #a74300;
+      background: #00a2e8;
+      text-shadow: 0.5px 0.5px 1px rgba(0,0,0,1);
+      outline: 0;
+    }
+
+    .btn-group {
+      margin-top:10px;
+      margin-bottom:7px;
+      margin-left: 2px;
+    }
+
+    .list-group-item {
+      border:0;
+      text-shadow: none;
+    }
+
+    a.list-group-item:focus, a.list-group-item:hover, button.list-group-item:focus, button.list-group-item:hover {
+      color: #a74300;
+      text-decoration: none;
+      background-color: #ddd;
+      text-shadow: none;
+    }
+
 </style>
 
 
-<div class="navbar navbar-inverse navbar-fixed-top faucet-nav" role="navigation">
-	<div class="container">
+<div class="navbar  navbar-fixed-top faucet-nav" role="navigation">
+	<div class="headcontainer1">
+
 		<div class="navbar-header">
-			<a class="navbar-brand" href=<?php echo '"' . $last_thread_link . '"' ;?> >Двач кран енотов</a>
+      <a class="navbar-brand" href=<?php echo '"' . $last_thread_link . '"' ;?> >Двач кран енотов</a>
 		</div>
+
+		 <div class="">
+
+          <div class="btn-group">
+             <a class="btn-head btn btn-secondary dropdown-toggle" href="https://2chpool.cc/getting_started">Двач пул</a>
+           </div>
+
+          <div class="btn-group ">
+            <button class="btn-head btn btn-secondary dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Йентен</button>
+            <div class="dropdown-menu">
+              <a class="dropdown-item list-group-item list-group-item-action " href="https://yentencoin.info/">Офф сайт</a>
+              <a class="dropdown-item list-group-item list-group-item-action " href="https://miningpoolstats.stream/yenten">Браузер пулов</a>
+              <a class="dropdown-item list-group-item list-group-item-action " href="https://ytn.ccore.online/">Браузер монеты</a>
+              <a class="dropdown-item list-group-item list-group-item-action "  href="http://explorer.yentencoin.info/info">Старейший браузер</a>
+              <a class="dropdown-item list-group-item list-group-item-action " href="https://www.coingecko.com/ru/%D0%9A%D1%80%D0%B8%D0%BF%D1%82%D0%BE%D0%B2%D0%B0%D0%BB%D1%8E%D1%82%D1%8B/yenten">Курс</a>
+            </div>
+          </div>
+
+
+          <div class="btn-group">
+            <button class="btn-head btn btn-secondary dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Кошелек</button>
+            <div class="dropdown-menu">
+              <a class="dropdown-item list-group-item list-group-item-action " href="https://github.com/yentencoin/yenten/releases/">Официальный</a>
+              <a class="dropdown-item list-group-item list-group-item-action " href="https://github.com/ChervyachokMigo/YENTEN-WALLET-EASY-INSTALLER/releases">Легкая установка</a>
+              <a class="dropdown-item list-group-item list-group-item-action " href="https://github.com/ChervyachokMigo/YENTEN-WALLET-EASY-INSTALLER/releases/download/bootstrap/bootstrap.rar">Бутстрап (блокчейн)</a>
+            </div>
+          </div>
+
+          <div class="btn-group">
+            <button class="btn-head btn btn-secondary dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Майнер</button>
+            <div class="dropdown-menu">
+              <a class="dropdown-item list-group-item list-group-item-action" href="https://github.com/JayDDee/cpuminer-opt/releases/">CPU-Miner от JayDDee</a>
+              <a class="dropdown-item list-group-item list-group-item-action" href="https://github.com/ChervyachokMigo/YENTEN-2ch-CPUMINER-BATCH-CONFFIGURER/releases">GUI Майнер (Конфигуратор)</a>
+              <a class="dropdown-item list-group-item list-group-item-action" href="https://github.com/ChervyachokMigo/GoogleShellCloud">На Гугл Консоли</a>
+            </div>
+          </div>
+          <div class="btn-group">
+            <button class="btn-head btn btn-secondary dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Общение</button>
+            <div class="dropdown-menu">
+              <a class="dropdown-item list-group-item list-group-item-action" href="https://t.me/joinchat/IvO17wh-OzQ6qvbH">Телеграм конфа</a>
+              <a class="dropdown-item list-group-item list-group-item-action" href="https://discord.gg/APMmzZ9uYw">Дискорд</a>
+              <a class="dropdown-item list-group-item list-group-item-action" href=<?php echo '"' . $last_thread_link . '"' ;?> >Двач тред в /cc/</a>
+              <a class="dropdown-item list-group-item list-group-item-action" href="https://bitcointalk.org/index.php?topic=5098631" >Тред на Бит-коин-толк</a>
+              <a class="dropdown-item list-group-item list-group-item-action" href="https://forum.bits.media/index.php?/topic/61231-ytn-cpu-mining-yenten-v310-yespowerr16/" >Тред на Битс-медиа</a>
+            </div>
+          </div>       
+
+      </div>
+
 	</div>
 </div>
 
@@ -279,7 +406,7 @@
 <h6 align="center">
   Сейчас на сайте <?php 
     if (!$db || $number_online==0) {
-      echo 'никого (x1.00)';
+      echo 'никого';
     } else {
       echo $number_online.' '; 
     
