@@ -158,7 +158,7 @@ if ($captcha_success->success==false) {
 								if ($AddOrPayResults['Sended']==0){
 									$data['boa'] .= "<h6>Отправлено в накопления.<br>" .
 												"Накоплено: <a 
-												title=\"Выигрыши будут выплачены при достижении накоплений в ".$GLOBALS["PAYOUT_LIMIT"]." енотов или при выигрыше.\" href=\"http://2ch-yenten-faucet.ml/#\">" . 
+												title=\"Накопления будут отправлены при достижении в ".$GLOBALS["PAYOUT_LIMIT"]." енотов или при выигрыше.\" href=\"http://2ch-yenten-faucet.ml/#\">" . 
 												round($AddOrPayResults['SumAmount'],2) . 
 												"</a> енотов *</h6><br>";
 

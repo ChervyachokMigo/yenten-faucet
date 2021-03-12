@@ -171,20 +171,6 @@
     .navbar-collapse.in {
       overflow-y: visible;
     }
-    
-    .headcontainer1 {
-      margin:auto;
-      width:850px;
-    }
-
-    .navbar-header {
-      margin-left:0px;
-      text-shadow: 0.5px 0.5px 1px rgba(0,0,0,1);
-    }
-
-    .navbar-header>a:hover {
-      color:#a74300;
-    }
 
     .dropdown-menu>a {
       background-color: #EAEAEA;
@@ -199,15 +185,25 @@
       text-shadow: none;
     }
 
+    .navbar-header {
+      margin-left:0px;
+      text-shadow: 0px 0px 2px rgba(200,100,0,1);
+    }
+
+    .navbar-header>a:hover {
+      color:#a74300;
+      text-shadow: 0px 0px 1px rgba(0,0,0,.5);
+    }
+
     a.btn-head {
-      text-shadow: 0.5px 0.5px 1px rgba(0,0,0,1);
+      text-shadow: 0px 0px 2px rgba(0,0,0,1);
       color: #ffa500;
       background: #00a2e8;
       border: 0px;
     }
 
     .btn-head {
-      text-shadow: 0.5px 0.5px 1px rgba(0,0,0,1);
+      text-shadow: 0px 0px 2px rgba(0,0,0,1);
       color: #ffa500;
       background: #00a2e8;
       border: 0px;
@@ -216,7 +212,7 @@
     .btn-head:focus, .btn-head:hover {
       color: #a74300;
       background: #00a2e8;
-      text-shadow: 0.5px 0.5px 1px rgba(0,0,0,1);
+      text-shadow: 0px 0px 1px rgba(0,0,0,.5);
       outline: 0;
     }
 
@@ -238,36 +234,92 @@
       text-shadow: none;
     }
 
+    .submit-btn, #page_refresh, #page_refresh_2{
+    	color: #ffa500;
+    	text-shadow: 0px 0px 1px rgba(0,0,0,1);
+    	box-shadow: 0 0 5px 1px rgba(0,0,0,.3);
+    	border-width:0;
+
+    }
+
+    .submit-btn:hover, .submit-btn:focus, #page_refresh:focus, #page_refresh_2:focus, #page_refresh:hover, #page_refresh_2:hover {
+    	color: #a74300;
+    	text-shadow: 0px 0px 1px rgba(0,0,0,0);
+    	box-shadow: inset 0 0 5px 1px rgba(0,0,0,.3);
+    }
+    .icon_2ch{
+      height:18px;
+      margin-right:5px;
+      margin-top: auto;
+      margin-bottom: auto;
+    }
+    .icon_brand{
+      position: relative;
+      height:40px;
+      float: left;
+      margin-right:10px;
+      margin-top: -10px;
+    }
+    .headcontainer1 {
+      margin:auto;
+      width:890px;
+    }
+    .site_title {
+    	text-shadow: 0px 0px 2px rgba(200,100,0,.6);
+    }
+    .navbar-header img:last-child {
+		display: none;  
+	}
+	.navbar-header:hover img:last-child {
+		display: block;  
+	}
+	.navbar-header:hover img:first-child {
+		display: none;  
+	}
+
+	.logo  img:last-child {
+		display: none;  
+	}
+	.logo:hover img:last-child {
+		display: block;  
+	}
+	.logo:hover img:first-child {
+		display: none;  
+	}
 </style>
 
 
 <div class="navbar  navbar-fixed-top faucet-nav" role="navigation">
 	<div class="headcontainer1">
 
-		<div class="navbar-header">
-      <a class="navbar-brand" href=<?php echo '"' . $last_thread_link . '"' ;?> >Двач кран енотов</a>
+		<div class="navbar-header" title="Перейти в тред на Дваче">
+		  <a class="navbar-brand" href=<?php echo '"' . $last_thread_link . '"' ;?> >
+		  	<img src="logo.png" class="icon_brand" border="0" />
+			<img src="logo_hover.png" class="icon_brand" border="0" />				
+			Двач кран енотов
+		  </a>
 		</div>
 
-		 <div class="">
-
           <div class="btn-group">
-             <a class="btn-head btn btn-secondary dropdown-toggle" href="https://2chpool.cc/getting_started">Двач пул</a>
+             <a class="btn-head btn btn-secondary dropdown-toggle" title="Перейти на Двач пул" href="https://2chpool.cc/getting_started"><img src="2ch.png" class="icon_2ch">Двач пул</a>
            </div>
 
           <div class="btn-group ">
-            <button class="btn-head btn btn-secondary dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Йентен</button>
+            <button class="btn-head btn btn-secondary dropdown-toggle" title="Раскрыть категорию" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Йентен</button>
             <div class="dropdown-menu">
               <a class="dropdown-item list-group-item list-group-item-action " href="https://yentencoin.info/">Офф сайт</a>
               <a class="dropdown-item list-group-item list-group-item-action " href="https://miningpoolstats.stream/yenten">Браузер пулов</a>
               <a class="dropdown-item list-group-item list-group-item-action " href="https://ytn.ccore.online/">Браузер монеты</a>
               <a class="dropdown-item list-group-item list-group-item-action "  href="http://explorer.yentencoin.info/info">Старейший браузер</a>
               <a class="dropdown-item list-group-item list-group-item-action " href="https://www.coingecko.com/ru/%D0%9A%D1%80%D0%B8%D0%BF%D1%82%D0%BE%D0%B2%D0%B0%D0%BB%D1%8E%D1%82%D1%8B/yenten">Курс</a>
+              <a class="dropdown-item list-group-item list-group-item-action " href="https://crex24.com/ru/exchange/YTN-BTC">Обмен (Crex24)</a>
+              <a class="dropdown-item list-group-item list-group-item-action " href="https://graviex.net/markets/ytnbtc">Обмен (Graviex)</a>
             </div>
           </div>
 
 
           <div class="btn-group">
-            <button class="btn-head btn btn-secondary dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Кошелек</button>
+            <button class="btn-head btn btn-secondary dropdown-toggle" title="Раскрыть категорию" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Кошелек</button>
             <div class="dropdown-menu">
               <a class="dropdown-item list-group-item list-group-item-action " href="https://github.com/yentencoin/yenten/releases/">Официальный</a>
               <a class="dropdown-item list-group-item list-group-item-action " href="https://github.com/ChervyachokMigo/YENTEN-WALLET-EASY-INSTALLER/releases">Легкая установка</a>
@@ -276,7 +328,7 @@
           </div>
 
           <div class="btn-group">
-            <button class="btn-head btn btn-secondary dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Майнер</button>
+            <button class="btn-head btn btn-secondary dropdown-toggle" title="Раскрыть категорию" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Майнер</button>
             <div class="dropdown-menu">
               <a class="dropdown-item list-group-item list-group-item-action" href="https://github.com/JayDDee/cpuminer-opt/releases/">CPU-Miner от JayDDee</a>
               <a class="dropdown-item list-group-item list-group-item-action" href="https://github.com/ChervyachokMigo/YENTEN-2ch-CPUMINER-BATCH-CONFFIGURER/releases">GUI Майнер (Конфигуратор)</a>
@@ -284,7 +336,7 @@
             </div>
           </div>
           <div class="btn-group">
-            <button class="btn-head btn btn-secondary dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Общение</button>
+            <button class="btn-head btn btn-secondary dropdown-toggle" title="Раскрыть категорию" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Общение</button>
             <div class="dropdown-menu">
               <a class="dropdown-item list-group-item list-group-item-action" href="https://t.me/joinchat/IvO17wh-OzQ6qvbH">Телеграм конфа</a>
               <a class="dropdown-item list-group-item list-group-item-action" href="https://discord.gg/APMmzZ9uYw">Дискорд</a>
@@ -294,8 +346,6 @@
             </div>
           </div>       
 
-      </div>
-
 	</div>
 </div>
 
@@ -304,18 +354,19 @@
 		
 			<div style="display: grid;grid-template-columns: 150px 250px; width: 410px;margin:0;margin-right:auto;margin-left:auto;">
 
-				<div style="width:min-content;margin:0px;">
+				<div style="width:min-content;margin:0px;" title="Перейти в тред на Дваче">
 
 				    <img id="loading" width="150px" height="150px" src="loading.gif"> 
-					<a href=<?php echo '"' . $last_thread_link . '"' ;?> >
-						<img width="150px" height="150px" id="logo" src="logo.png" > 
+					<a class="logo" href=<?php echo '"' . $last_thread_link . '"' ;?> >
+						<img width="150px" height="150px" id="logo" src="logo.png" border="0" /> 
+						<img width="150px" height="150px" src="logo_hover.png" border="0" />		
 					</a>
 
 				</div>
 				<div style="width:max-content;margin:0px;margin-left:10px;margin-top:30px;">
 
-					<h2 class="display-4 text-nowrap" style="color: #ffa500;width:max-content;">Двач кран енотов</h2>
-				  	<h6 align="center" class=" text-nowrap" style="color: #ccc;width:max-content;margin:auto;">Добро пожаловать, снова.</h6>
+					<h2 class="display-4 site_title text-nowrap" style="color: #ffa500;width:max-content;">Двач кран енотов</h2>
+				  	<h6 align="center" class=" text-nowrap" style="color: #aaa;width:max-content;margin:auto;">Добро пожаловать, снова.</h6>
 
 			  	</div>
 
@@ -383,7 +434,7 @@
 
 <div class="faucet_block" id="faucet_footer">
 
-<h4 align="center" ><a href="https://2chpool.cc/workers/Ye2NDKfp53WV6zG5GPnuCRdkPDicenBEY9">
+<h4 align="center" ><a href="https://2chpool.cc/workers/Ye2NDKfp53WV6zG5GPnuCRdkPDicenBEY9" title="Вкинуться">
     <?php 
       	echo $faucet_balance;
     ?>
@@ -395,15 +446,15 @@
    $all_max_out = $all_max / $GLOBALS["PAYOUT_AMOUNT_MULTIPLIER"];
    $all_min_out = $all_min / $GLOBALS["PAYOUT_AMOUNT_MULTIPLIER"];
 
-   echo "Возможные выигрыши: ".$all_min_out." - ".$all_max_out." енотов";
+   echo "Возможные роллы: ".$all_min_out." - ".$all_max_out." енотов";
 
    ?>
 </h6>
 
 <h5 align="center">
-	<a href="https://2chpool.cc/" target="_blank">https://2chpool.cc/</a> (<?php echo date("Y"); ?>) 
+	<a href="https://2chpool.cc/" target="_blank" title="Двач пул">https://2chpool.cc/</a> (<?php echo date("Y"); ?>) 
 </h5>
-<h6 align="center">
+<h6 align="center" style="margin-bottom: 17px;">
   Сейчас на сайте <?php 
     if (!$db || $number_online==0) {
       echo 'никого';
@@ -424,11 +475,10 @@
   ?> 
 </h6>
 
-<h6 align="center">
-  * Выигрыши будут выплачены при достижении накоплений в <?php echo $GLOBALS["PAYOUT_LIMIT"]; ?> енотов или при выигрыше.
+<h6 align="center" style="color: #ccc;line-height: 1.5px;">
+  * Накопления будут отправлены при достижении в <?php echo $GLOBALS["PAYOUT_LIMIT"]; ?> енотов или при выигрыше.
 </h6>
-
-<h6 align="center">
+<h6 align="center" style="color: #ccc;line-height: 1.5px;">
   ** Когда закончится баланс, накопления и ошибки будут обработаны в ручном режиме, спустя какое-то время!
 </h6>
   <div id="player"></div>
