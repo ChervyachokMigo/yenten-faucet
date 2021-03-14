@@ -47,7 +47,7 @@ function ExecutePayout(){
 	   		}
 
 	     	// количество неоплаченных (ошибочных) транзакций
-		    $result_3 = $db->query( 'SELECT ID, Wallet, SumAmount FROM RollsArchive WHERE TransactionID = \'\'' );
+		    $result_3 = $db->query( 'SELECT ID, Wallet, SumAmount FROM rollsarchive WHERE TransactionID = \'\'' );
 		    $notPayedCount_res = $result_3->fetch_array(MYSQLI_ASSOC);
 		    
 		    echo "<pre>";
@@ -97,7 +97,7 @@ function ExecutePayout(){
 		    // выполняем поиск по накопленым монеткам
 		    } else {
 		    	// берем первого кто попался
-		    	$result_2 = $db->query('SELECT DISTINCT Wallet as this FROM Rolls' );
+		    	$result_2 = $db->query('SELECT DISTINCT Wallet as this FROM rolls' );
 		    	$CollectionWalletToPayout_res = $result_2->fetch_array(MYSQLI_ASSOC);
 		    	
 		    	//если там не ноль, то выполняем 
