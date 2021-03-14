@@ -102,7 +102,7 @@ function GetTransactionsBalance(&$db){
     }
 
     //количество неоплаченных (ошибочных) транзакций
-    $result_3 = mysqli_query( $db , 'SELECT COUNT () as this FROM rollsarchive WHERE TransactionID = \'\'' );
+    $result_3 = mysqli_query( $db , 'SELECT COUNT (*) as this FROM rollsarchive WHERE TransactionID = \'\'' );
     if ($result_3) {
       $notPayedCount_res = mysqli_fetch_array($result_3 , MYSQLI_ASSOC);
       mysqli_free_result($result_3);
@@ -195,7 +195,7 @@ function AddOrPayYentens( &$db_id , $Wallet, $payout_amount = 0, $use_limits = 1
 	if ($use_limits == 1){
 		//заносим в базу текущий ролл
 		$db_id->query('
-	    INSERT INTO Rolls ( Wallet, Amount) 
+	    INSERT INTO rolls ( Wallet, Amount) 
 	    VALUES ( '.$Wallet_tosql.', '.$payout_amount.') ' );
 	}
 
