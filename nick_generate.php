@@ -12,10 +12,10 @@ function Nick_Generate(&$db){
 	$second = $db->query($sql1)->fetch_array(MYSQLI_NUM)[0];
 	$third = $db->query($sql3)->fetch_array(MYSQLI_NUM)[0];
 
-	$title = array('абу-','ибн-','де ','дель ','д\' ','бен ','ван ','дю ','фон ','мак ', 'о\' ', 'фитц ');
+	$title = array('абу-','ибн-','де ','дель ','ди ','бен ','ван ','дю ','фон ','мак ', 'о ', 'фитц ');
 
 	return $first ." ". $third ." ". $title[ rand( 0, count($title)-1 ) ]. $second;
-	
+
 }
 
 
