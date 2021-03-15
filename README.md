@@ -1,7 +1,7 @@
 # Двач кран енотов
 ## 2ch Yenten-coin faucet
 
-Работает в данный момент на: <a href="http://2ch-yenten-faucet.ml">2ch-yenten-faucet.ml</a>
+Работает в данный момент на: <a href="http://2ch-yenten-faucet.ml">2ch-yenten-faucet.ml</a> и <a href="http://yenten.top">yenten.top</a>
 
 ### Последние изменения
 
