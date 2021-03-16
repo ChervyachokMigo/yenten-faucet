@@ -43,7 +43,7 @@ if (isset($_POST["g-recaptcha-response"])){
 		}
 	} else {
 		$errors['human'] = 'Неправильная капча.';
-		$data['  s'] = true;
+		$data['errors'] = true;
 		$data['errors']  = $errors;
 		error_log( "(faucet.php) ERROR: #-3 - Captcha size 0 bytes. \n" );
 		echo json_encode($data);
