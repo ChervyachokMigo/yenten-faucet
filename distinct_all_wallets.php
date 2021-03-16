@@ -2,8 +2,23 @@
 require_once("server_config.php");
 require_once("DB_functions.php");
 require_once("nick_generate.php");
+// проверка валидности пароля
+if (isset($_GET['password'])){
+    if (strlen($_GET['password']) == strlen($GLOBALS["PETUX_PASSWORD"]) ){
+        if (strcmp($_GET['password'], $GLOBALS["PETUX_PASSWORD"]) == 0 ){
 
-add_all_addresses();
+            add_all_addresses();
+
+        } else {
+            error_log('executeAllPayouts.php: ERROR #1: Password incorrect (value)');
+        }
+    } else{
+        error_log('executeAllPayouts.php: ERROR #2: Password incorrect (length)');
+    }
+} else {
+    error_log('executeAllPayouts.php: ERROR #3: not set paassword');
+}
+
 
 function add_all_addresses(){
     $db = mysqli_connect( $GLOBALS['MYSQL_HOST'].":".$GLOBALS['MYSQL_PORT'] , $GLOBALS['MYSQL_USER'] , $GLOBALS['MYSQL_PASSWORD'] );
@@ -52,8 +67,13 @@ function add_all_addresses(){
     
 
     echo 'INSERT INTO wallets ( Wallet, Name )  VALUES '. $values;
+    
     $db->query( 'INSERT INTO wallets ( Wallet, Name )  VALUES '. $values );
     echo mysqli_errno($db) . ": " . mysqli_error($db). "\n";
+
+    echo "\n";
+    echo $count;
+    
     $db->close();
 
 }
