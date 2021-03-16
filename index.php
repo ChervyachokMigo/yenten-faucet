@@ -3,7 +3,7 @@
 
 <head>
 	<meta charset="UTF-8">
-	<title>Двач кран енотов - 2ch-yenten-faucet.ml</title>
+	<title>Двач кран енотов - yenten.top</title>
 	<meta name="robots" content="noindex,nofollow, noodp,noydir"/>
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
@@ -46,6 +46,10 @@
         die("DB not found");
       }
 
+      $db->query("SET NAMES utf8mb4");
+      $db->query("SET CHARACTER SET utf8mb4");
+      $db->set_charset('utf8mb4');
+
       //определение баланса неоплаченых транзакций
       $Transactions_now = GetTransactionsBalance( $db );
 
@@ -63,14 +67,14 @@
         if ($balance && $balanceTransactions != -1){
           $balanceOut = $balance - $balanceTransactions - $feeTransactions;
           if ($balance > $EmptyBalanceAt ){
-            $faucet_balance = "На кране осталось <div id=\"div_balance\" style=\"display:inline-block\">" . (round ($balanceOut,3)) . "</div> енотов **";
+            $faucet_balance = "На кране осталось <div id=\"div_balance\" style=\"display:inline-block\">" . ( number_format ( round ( $balanceOut , 2 ) , 2 ) ) . "</div> енотов **";
           } else {
             $balance = 0;
             $faucet_balance = "На кране не осталось енотов **";
           }
         } else {
           $balance = 0;
-          $faucet_balance = "Раздача закончена!";
+          $faucet_balance = "Нет связи с кошельком!";
         }
 
          // Проверка онлайна на сайте
@@ -270,6 +274,9 @@
     .navbar-header img:last-child {
 		display: none;  
 	}
+	.navbar-header img:first-child {
+		display: block;  
+	}
 	.navbar-header:hover img:last-child {
 		display: block;  
 	}
@@ -279,6 +286,9 @@
 
 	.logo  img:last-child {
 		display: none;  
+	}
+	.logo img:first-child {
+		display: block;  
 	}
 	.logo:hover img:last-child {
 		display: block;  
@@ -358,8 +368,8 @@
 
 				    <img id="loading" width="150px" height="150px" src="loading.gif"> 
 					<a class="logo" href=<?php echo '"' . $last_thread_link . '"' ;?> >
-						<img width="150px" height="150px" id="logo" src="logo.png" border="0" /> 
-						<img width="150px" height="150px" src="logo_hover.png" border="0" />		
+						<img width="150px" class='hidden' height="150px" id="logo" src="logo.png" border="0" /> 
+						<img width="150px" class='' height="150px" src="logo_hover.png" border="0" />		
 					</a>
 
 				</div>
@@ -446,7 +456,7 @@
    $all_max_out = $all_max / $GLOBALS["PAYOUT_AMOUNT_MULTIPLIER"];
    $all_min_out = $all_min / $GLOBALS["PAYOUT_AMOUNT_MULTIPLIER"];
 
-   echo "Возможные роллы: ".$all_min_out." - ".$all_max_out." енотов";
+   echo "Возможные роллы: ".number_format( round( $all_min_out , 4 ) , 4 )." - ".number_format( round( $all_max_out , 2 ) , 2 )." енотов";
 
    ?>
 </h6>
@@ -469,7 +479,7 @@
       if ( $number_online >= 5 && $number_online <=20 
           || ($number_online > 20 && ($number_online % 10 >= 5 && $number_online % 10 <= 9 || $number_online % 10 == 0) ) ) 
         echo 'енотоманов ';
-      echo '(x' . round(GetHumansNumberMultiplier($db) , 3 ) . ')';
+      echo '(x' . number_format( round( GetHumansNumberMultiplier($db) , 2 ) , 2 ). ')';
     }
    
   ?> 

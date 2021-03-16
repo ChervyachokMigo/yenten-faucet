@@ -11,6 +11,10 @@ function add_all_addresses(){
     
     mysqli_select_db( $db , $GLOBALS['MYSQL_DB']);
 
+    $db->query("SET NAMES utf8mb4");
+    $db->query("SET CHARACTER SET utf8mb4");
+    $db->set_charset('utf8mb4');
+
     $all_wallets = array();
 
     $result_3 = $db->query( 'SELECT Wallet FROM rollsarchive ' );
@@ -28,11 +32,6 @@ function add_all_addresses(){
         }
     }
     
-
-
-    
-	
-
     array_unique($all_wallets);
 
     foreach($all_wallets as $key => $wallet){
@@ -47,7 +46,7 @@ function add_all_addresses(){
     foreach($all_wallets as $wallet => $nick){       
         if ($count>0)
             $values .= ' , ';
-        $values .= '(\''. trim($wallet) .'\' , \''. trim($nick) .'\')';
+        $values .= '(\''. $wallet .'\' , \''. $nick .'\')';
         $count ++;
     }
     

@@ -151,13 +151,13 @@ $(document).ready(function () {
 						}
 						if (data.errors.transaction) {
 							$('#error').append('<div class="alert alert-dismissible  alert-warning"><button type="button" class="close" data-dismiss="alert">×</button>' + data.boa + '</div>');
-							data.balanceChange = data.balanceChange.toFixed(3);
-							$('#div_balance').html( (parseFloat($('#div_balance').html()) - parseFloat(data.balanceChange)).toFixed(3).toString() );
+							data.balanceChange = Math.round( (parseFloat(data.balanceChange)*100) ) / 100; 
+							$('#div_balance').html( (parseFloat($('#div_balance').html()) - data.balanceChange).toFixed(2).toString() );
 						}
 					} else {
 						$('#error').append('<div class="alert alert-dismissible  alert-success"><button type="button" class="close" data-dismiss="alert">×</button><h3>' + data.boa + '</h3></div>');
-						data.balanceChange = data.balanceChange.toFixed(3);
-						$('#div_balance').html( (parseFloat($('#div_balance').html()) - parseFloat(data.balanceChange)).toFixed(3).toString() );
+						data.balanceChange = Math.round( (parseFloat(data.balanceChange)*100) ) / 100; 
+						$('#div_balance').html( (parseFloat($('#div_balance').html()) - data.balanceChange).toFixed(2).toString() );
 					}
 					$("#logo").removeClass("hidden");
 					$("#loading").addClass("hidden");

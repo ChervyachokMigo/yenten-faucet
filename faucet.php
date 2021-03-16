@@ -1,11 +1,12 @@
 <?php
 require_once("server_config.php");
 require_once("DB_functions.php");
+require_once("nick_generate.php");
 
 // проверка капчи
 if (isset($_POST["g-recaptcha-response"])){
 	//error_log(strlen($_POST["g-recaptcha-response"]));
-	if ( strlen($_POST["g-recaptcha-response"]) >0 ){
+	if ( strlen($_POST["g-recaptcha-response"]) > 0 ){
 
 	  	$response = $_POST["g-recaptcha-response"];
 		
@@ -42,7 +43,7 @@ if (isset($_POST["g-recaptcha-response"])){
 		}
 	} else {
 		$errors['human'] = 'Неправильная капча.';
-		$data['errors'] = true;
+		$data['  s'] = true;
 		$data['errors']  = $errors;
 		error_log( "(faucet.php) ERROR: #-3 - Captcha size 0 bytes. \n" );
 		echo json_encode($data);
@@ -102,13 +103,19 @@ if ($captcha_success->success==false) {
 				        die("DB not found");
 				    }
 
-				    if ( CheckOnlineTime( $db, $username ) !=0 ){
+					$db->query("SET NAMES utf8mb4");
+					$db->query("SET CHARACTER SET utf8mb4");
+					$db->set_charset('utf8mb4');
+
+					$username_id = GetWalletID( $username, $db );	//получаем айди кошелька и работаем с ним
+
+				    if ( CheckOnlineTime( $db, $username_id ) !=0 ){	//проверка 5 секунд
 
 				    	// дополнение калькулешена 
 				    	$OnlineHumansMultiplier = GetHumansNumberMultiplier($db);
 						$payout_yentens = $payout_yentens * $OnlineHumansMultiplier;
 
-						$CaptchaMultiplier = GetCaptchaMultiplier($db , $username);
+						$CaptchaMultiplier = GetCaptchaMultiplier($db , $username_id);
 						$payout_yentens = $payout_yentens * $CaptchaMultiplier;
 
 						// вторая проверка баланса потому что я даун
@@ -126,12 +133,15 @@ if ($captcha_success->success==false) {
 		            	//$AddOrPayResults['SumAmount'] - сколько накоплено или сколько отправляем
 		            	//$AddOrPayResults['error'] - проблемы с подключением к базе
 		            	//$AddOrPayResults['Sended'] - 0 - накапливаем, 1 - выплачиваем из-за лимитов, 2 - выплачиваем, потому что выиграли
-		            	$AddOrPayResults = AddOrPayYentens( $db , $username , $payout_yentens * $GLOBALS['DB_COINS_ACCURACCY'] );
+		            	$AddOrPayResults = AddOrPayYentens( $db , $username_id , $payout_yentens * $GLOBALS['DB_COINS_ACCURACCY'] );
 
 		            	if ($AddOrPayResults['error'] == 0) {
 			            	//записываем юзера в онлайн базу на 5 минут
-			            	SetWalletOnline( $db, $username );
+			            	SetWalletOnline( $db, $username_id );
 			            	
+			            	//обновляем общий счетчик капчи
+			            	UpdateWalletCaptchaCount( $username_id , $db );
+
 			            	//подготавливаем вывод в клиент
 							$data['success'] = true;
 							$data['boa'] = 	'Вы получили <a href="http://2ch-yenten-faucet.ml/#">' . 
