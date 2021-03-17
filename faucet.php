@@ -144,7 +144,9 @@ if ($captcha_success->success==false) {
 
 			            	//подготавливаем вывод в клиент
 							$data['success'] = true;
-							$data['boa'] = 	'Вы получили <a href="http://2ch-yenten-faucet.ml/#">' . 
+							$data['boa'] = '<h4 id="alert_capcher_name">'.GetCapcherName( $username_id,$db )."</h4>";
+							$data['boa'] .= '<h3>';
+							$data['boa'] .= 'Вы получили <a href="http://2ch-yenten-faucet.ml/#">' . 
 											round($payout_yentens,4) . 
 											"</a> енотов!<br>" .
 											"Выпало: " . $roll . "<br>" . 
@@ -160,7 +162,8 @@ if ($captcha_success->success==false) {
 								$data['boa'] .= " (x" . $lucky_multi . "!)";
 							}
 
-							$data['boa'] .='<br>';
+							$data['boa'] .= '</h3>';
+							
 
 							$data['boa'] .= "<h6>Бонус за капчи: x".round($CaptchaMultiplier,3)."</h6>";
 
@@ -213,11 +216,9 @@ if ($captcha_success->success==false) {
 										$data['errors']  = $errors;
 										error_log( "(faucet.php) ERROR: #7 - Transaction Empty by " .  $username . " with " . $AddOrPayResults['SumAmount'] . "\n" );
 						        	}
-
 						        	$data['balanceChange'] = $AddOrPayResults['SumAmount'];
 
 								}
-
 								// отправка успешного сообщения
 								echo json_encode($data);
 

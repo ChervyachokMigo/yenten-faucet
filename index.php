@@ -5,10 +5,9 @@
 	<meta charset="UTF-8">
 	<title>Двач кран енотов - yenten.top</title>
 	<meta name="robots" content="noindex,nofollow, noodp,noydir"/>
-	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
-	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
-	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
+	<link rel="stylesheet" href="bootstrap.min.css">
+	<script src="jquery.min.js"></script>
+	<script src="bootstrap.min.js"></script>
 	<script src="https://www.google.com/recaptcha/api.js" async defer></script>
 </head>
 
@@ -89,6 +88,7 @@
 
         $number_online = 0;
       }
+      $topCapchers = GetTopCapchers($db);
   }
 
 
@@ -205,7 +205,16 @@
       background: #00a2e8;
       border: 0px;
     }
-
+    .btn{
+      color: #ffa500;
+      background: #00a2e8;
+      text-shadow: 0px 0px 2px rgba(0,0,0,1);
+    }
+    .btn:focus, .btn:hover {
+      color: #a74300;
+      background: #00a2e8;
+      text-shadow: 0px 0px 1px rgba(0,0,0,.5);  
+    }
     .btn-head {
       text-shadow: 0px 0px 2px rgba(0,0,0,1);
       color: #ffa500;
@@ -296,6 +305,110 @@
 	.logo:hover img:first-child {
 		display: none;  
 	}
+
+  .top_capchers {
+    position:fixed;
+    top:60px;
+    right:5px;
+    z-index:1000;
+    width:max-content;
+  }
+  .top_capchers>butto {
+    border-top-left-radius: 4px;
+    border-bottom-left-radius: 4px;
+  }
+  .top_capchers>.dropdown-menu {
+    position:relative;
+    left:-5px;
+  }
+  .topcapcher_name {
+    width:fit-content;
+    display:block;
+    float:left;
+    margin-left:15px;
+    margin-right:10px;
+    border-width:1px;
+  }
+  .topcapcher_capchas {
+    width:fit-content;
+    display:block;
+    float:right;
+    margin-left:10px;
+    margin-right:15px;
+  }
+  .topcapcher_item {
+    margin:0;
+    padding:0;
+    height: 20px;
+    background:inherit;
+    border-bottom-style: ridge;
+    border-radius: 0;
+    border-width: thin;
+    border-bottom-color: rgba(0,0,0,.04);
+  }
+  .list-group-item:last-child{
+    border-radius: 0 !important;
+  }
+  @media screen and (max-width: 768px) {
+    .top_capchers{
+      top:110px;
+    }
+    .container .jumbotron{
+      margin-top:40px;
+    }
+  }
+  @media screen and (min-width: 769px) {
+    .top_capchers{
+      top:60px;
+    }
+    .container .jumbotron{
+      margin-top:0px;
+    }
+  }
+
+  @keyframes bgrandom {
+    0% { color:red; }
+    20% { color:orange;}
+    60% { color:green; }
+    80% { color:blue; }
+    100% { color:purple;}
+    }
+
+    #topcapcher_first {  animation: 1.2s bgrandom infinite; }
+
+    .topcapcher_capchas{
+      color: #00a2e8;
+      text-shadow: 0px 0px 1px rgba(0,0,0,.7);
+    }
+    .topcapcher_name{
+      text-shadow: 0px 0px 1px rgba(0,0,0,.7);
+    }
+    .capchasoses{
+      margin-top:5px;
+      margin-bottom:10px;
+    }
+    .right_panel_btn{
+      color: #ffa500;
+      background-color: #00a2e8;
+      text-shadow: 0px 0px 2px rgba(0,0,0,1);
+    	width: fit-content;
+      padding: 7px;
+      outline: 0;
+      border-width: 1px;
+      border-color: #ffa500;
+      border-radius:4px !important;
+    }
+    .right_panel_btn:hover, .right_panel_btn:focus{
+      color: #a74300;
+      text-shadow: 0px 0px 1px rgba(0,0,0,.5);
+      
+    }
+    #alert_capcher_name{
+      margin-right:25px;
+    }
+    .alert{
+      width:max-content !important;
+    }
 </style>
 
 
@@ -357,6 +470,36 @@
           </div>       
 
 	</div>
+</div>
+
+<div class="btn-group dropleft top_capchers">
+  <div class="dropdown-menu">
+    <div class="capchasoses">
+      <?php
+        $colors = array('red','orange','olive','lime','green','aqua','blue','navy','teal','fuchsia','purple','maroon');
+        if ( count($topCapchers)>0 ){
+          $i = 0;
+          foreach ( $topCapchers as $topCapchearsEach){
+            echo '<div class="topcapcher_item dropdown-item list-group-item">';
+            if ($i==0){
+              echo  '<div class="topcapcher_name" id="topcapcher_first">';
+            } else {
+              echo  '<div class="topcapcher_name" style="color:'. $colors[ rand( 0, count($colors)-1 ) ] .';">';
+            }
+            echo  $topCapchearsEach['Name'].'</div>'.
+              '<div class="topcapcher_capchas">'.
+              $topCapchearsEach['AllNumberCaptcha'].'</div>'.
+            '</div>';
+            $i++;
+          }
+        }
+      ?>
+      </div>
+    </div>
+  <button type="button" class="right_panel_btn dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+    Топ капчесосов
+  </button>
+  
 </div>
 
 <div class="container" role="main">

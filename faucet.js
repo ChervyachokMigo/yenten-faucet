@@ -153,11 +153,14 @@ $(document).ready(function () {
 							$('#error').append('<div class="alert alert-dismissible  alert-warning"><button type="button" class="close" data-dismiss="alert">×</button>' + data.boa + '</div>');
 							data.balanceChange = Math.round( (parseFloat(data.balanceChange)*100) ) / 100; 
 							$('#div_balance').html( (parseFloat($('#div_balance').html()) - data.balanceChange).toFixed(2).toString() );
+							$('#div_balance').html( numberWithCommas( $('#div_balance').html() ) );
 						}
 					} else {
 						$('#error').append('<div class="alert alert-dismissible  alert-success"><button type="button" class="close" data-dismiss="alert">×</button><h3>' + data.boa + '</h3></div>');
 						data.balanceChange = Math.round( (parseFloat(data.balanceChange)*100) ) / 100; 
-						$('#div_balance').html( (parseFloat($('#div_balance').html()) - data.balanceChange).toFixed(2).toString() );
+						
+						$('#div_balance').html( (parseFloat($('#div_balance').html().replace(/,/g,"")) - data.balanceChange).toFixed(2).toString() );
+						$('#div_balance').html( numberWithCommas( $('#div_balance').html() ) );
 					}
 					$("#logo").removeClass("hidden");
 					$("#loading").addClass("hidden");
@@ -185,3 +188,9 @@ $(document).ready(function () {
 
 	});
 });
+
+function numberWithCommas(x) {
+    var parts = x.toString().split(".");
+    parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+    return parts.join(".");
+}

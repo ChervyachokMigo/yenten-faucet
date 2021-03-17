@@ -13,6 +13,16 @@ function CompareTime($timestamp_1, $timestamp_2 = null, $seconds = 300) {
   return intval( $timestamp_1 >= ($timestamp_2 - $seconds) );  
 }
 
+function GetCapcherName($Wallet_id, &$db){
+	$results = $db->query( 'SELECT Name FROM wallets WHERE ID = '. $Wallet_id );
+	return $results->fetch_array(MYSQLI_NUM)[0];
+}
+
+function GetTopCapchers(&$db){
+	$results = $db->query( 'SELECT Name, AllNumberCaptcha FROM wallets ORDER BY AllNumberCaptcha DESC LIMIT 10' );
+	return $results->fetch_all(MYSQLI_ASSOC);
+}
+
 function UpdateWalletCaptchaCount( $Wallet_id , &$db ){
 	$sql = 'UPDATE wallets SET AllNumberCaptcha = AllNumberCaptcha + 1 WHERE ID = ' . $Wallet_id;
 	$db->query( $sql );
