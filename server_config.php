@@ -62,6 +62,9 @@ $GLOBALS["PAYOUT_MULTIPLIER_CAPTCHA_RATE"] = 0.00417;		//множитель за
 $GLOBALS["PAYOUT_CAPTCHA_MAX_MULTIPLIER"] = 2;		// максимайльный множитель за капчи, 0 без лимита
 $GLOBALS["PAYOUT_ONE_CAPTCHA_MULTIPLIER"] = 0.0000028;	//множитель за все капчи
 $GLOBALS["ONLINE_MULTIPLIER_CAPTCHA_MIN_RATE"] = 0.033;	//коэфициент скорости капч ниже которого не будет учитываться онлайн
+$GLOBALS["PAYOUT_CAPTCHA_PLACE_MULTIPLIER_MAX"] = 0.5; //	икс за первое место (1 + 1)
+$GLOBALS["PAYOUT_CAPTCHA_PLACE_MULTIPLIER"] = 0.05;	// на сколько уменьшается следующее вниз место
+
 
 //бонус за людей на сайте
 $GLOBALS["PAYOUT_MIN_NUMBER_CAPTCHA"] = 16;		//минимально капчей, чтобы они начались считаться
@@ -86,6 +89,8 @@ $all_max_without_captcha_online = $GLOBALS["PAYOUT_MAX"] * $GLOBALS["PAYOUT_MULT
 $all_max = $all_max_without_captcha_online * $GLOBALS["PAYOUT_CAPTCHA_MAX_MULTIPLIER"] * $GLOBALS["PAYOUT_MAX_MULTIPLIER_PER_HUMAN"];
 
 $all_max *= ( 1 + GetMaxAllCaptchaCount() * $GLOBALS["PAYOUT_ONE_CAPTCHA_MULTIPLIER"] );
+
+$all_max *= 1 + $GLOBALS["PAYOUT_CAPTCHA_PLACE_MULTIPLIER_MAX"];
 
 // Когда выплачивать (выигрыш)
 $GLOBALS["PAYOUT_AUTOPAY_LIMIT_MIN"] = ( $all_max_without_captcha_online * $GLOBALS["PAYOUT_WIN_LIMIT"] ) / $GLOBALS["PAYOUT_AMOUNT_MULTIPLIER"];			// считается выигрышем после этого значения (в йентенах)
