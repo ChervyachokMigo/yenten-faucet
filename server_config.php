@@ -60,6 +60,8 @@ $GLOBALS["PAYOUT_RARE_CHANCE"] = 3;				//0.01-100%
 //бонусы за капчу
 $GLOBALS["PAYOUT_MULTIPLIER_CAPTCHA_RATE"] = 0.00417;		//множитель за одну капчу
 $GLOBALS["PAYOUT_CAPTCHA_MAX_MULTIPLIER"] = 2;		// максимайльный множитель за капчи, 0 без лимита
+$GLOBALS["PAYOUT_ONE_CAPTCHA_MULTIPLIER"] = 0.0000028;	//множитель за все капчи
+$GLOBALS["ONLINE_MULTIPLIER_CAPTCHA_MIN_RATE"] = 0.033;	//коэфициент скорости капч ниже которого не будет учитываться онлайн
 
 //бонус за людей на сайте
 $GLOBALS["PAYOUT_MIN_NUMBER_CAPTCHA"] = 16;		//минимально капчей, чтобы они начались считаться
@@ -69,17 +71,61 @@ $GLOBALS["PAYOUT_MAX_MULTIPLIER_PER_HUMAN"] = 2;	// any, 0 - no limit
 
 
 
+//////////////////////КОНЕЦ НАСТРОЕК, НИЖЕ ПОДСЧЕТ////////////////////////////////
+
+
+
 //////////////////////////////////////////////////////////////////////////////
 ///// Подсчет, не конфигурировать ///////////////////////////////////////////
 $GLOBALS["RPC_URL"] = 	'http://'.$GLOBALS["RPC_CONNECT_NAME"].':'.$GLOBALS["RPC_CONNECT_PASSWORD"].
 						'@'.$GLOBALS["RPC_CONNECT_IP"].':'.$GLOBALS["RPC_CONNECT_PORT"];
-$all_max_without_captcha_online = $GLOBALS["PAYOUT_MAX"] * $GLOBALS["PAYOUT_MULTICAST_MAX"] * $GLOBALS["PAYOUT_LUCKY_MULTIPLIER"] * $GLOBALS["PAYOUT_RARE_MULTIPLIER"];
-$all_max = $GLOBALS["PAYOUT_MAX"] * $GLOBALS["PAYOUT_MULTICAST_MAX"] * $GLOBALS["PAYOUT_LUCKY_MULTIPLIER"] * $GLOBALS["PAYOUT_RARE_MULTIPLIER"] * $GLOBALS["PAYOUT_CAPTCHA_MAX_MULTIPLIER"] * $GLOBALS["PAYOUT_MAX_MULTIPLIER_PER_HUMAN"];
+
 $all_min = $GLOBALS["PAYOUT_MIN"] * $GLOBALS["PAYOUT_MULTICAST_MIN"];
+
+$all_max_without_captcha_online = $GLOBALS["PAYOUT_MAX"] * $GLOBALS["PAYOUT_MULTICAST_MAX"] * $GLOBALS["PAYOUT_LUCKY_MULTIPLIER"] * $GLOBALS["PAYOUT_RARE_MULTIPLIER"];
+$all_max = $all_max_without_captcha_online * $GLOBALS["PAYOUT_CAPTCHA_MAX_MULTIPLIER"] * $GLOBALS["PAYOUT_MAX_MULTIPLIER_PER_HUMAN"];
+
+$all_max *= ( 1 + GetMaxAllCaptchaCount() * $GLOBALS["PAYOUT_ONE_CAPTCHA_MULTIPLIER"] );
 
 // Когда выплачивать (выигрыш)
 $GLOBALS["PAYOUT_AUTOPAY_LIMIT_MIN"] = ( $all_max_without_captcha_online * $GLOBALS["PAYOUT_WIN_LIMIT"] ) / $GLOBALS["PAYOUT_AMOUNT_MULTIPLIER"];			// считается выигрышем после этого значения (в йентенах)
 
 ///////////////////////////////////////////////////////////////////////////////
+
+
+
+/////////////// получить сколько капч у топ капчесоса
+function GetMaxAllCaptchaCount(){
+	$db = mysqli_connect( $GLOBALS['MYSQL_HOST'].":".$GLOBALS['MYSQL_PORT'] , $GLOBALS['MYSQL_USER'] , $GLOBALS['MYSQL_PASSWORD'] );
+	
+	$outResult = 1;
+
+	if ( $db != false ) {
+		if ( ! mysqli_select_db( $db , $GLOBALS['MYSQL_DB'] ) ){
+			error_log("DB not found");
+			die("DB not found");
+		}
+
+		$db->query("SET NAMES utf8mb4");
+		$db->query("SET CHARACTER SET utf8mb4");
+		$db->set_charset('utf8mb4');
+
+		$results = $db->query(  'SELECT AllNumberCaptcha FROM wallets ORDER BY AllNumberCaptcha DESC LIMIT 1' );
+
+		if ($results){
+			if (mysqli_num_rows($results)!=0){
+				$outResult = $results->fetch_array(MYSQLI_ASSOC)['AllNumberCaptcha'];
+			}
+		}
+
+		mysqli_free_result($results);
+		mysqli_close ($db);
+		$db = null;
+	}
+
+	return $outResult;
+}
+
+
 
 ?>
