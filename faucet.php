@@ -118,6 +118,9 @@ if ($captcha_success->success==false) {
 						$CaptchaMultiplier = GetCaptchaMultiplier($db , $username_id);
 						$payout_yentens = $payout_yentens * $CaptchaMultiplier;
 
+						$user_Place = GetPlace ($username_id, $db);
+						$payout_yentens = $payout_yentens * $user_Place['Multiplier'];
+
 						// вторая проверка баланса потому что я даун
 						if($WalletBalance < $payout_yentens){
 							$errors['balance'] = 'Кран пуст.';
@@ -164,9 +167,12 @@ if ($captcha_success->success==false) {
 
 							$data['boa'] .= '</h3>';
 							
-
 							$data['boa'] .= "<h6>Бонус за капчи: x".round($CaptchaMultiplier,3)."</h6>";
-
+							if ($user_Place['Number']>0 && $user_Place['Number']!=1){
+								$data['boa'] .= '<h5>Вы на '. $user_Place['Number'] .' месте капчесосов (x'.$user_Place['Multiplier'].')</h5>';
+							} elseif ($user_Place['Number']==1){
+								$data['boa'] .= '<h5 class="topcapcher_first">Вы на '. $user_Place['Number'] .' месте капчесосов (x'.$user_Place['Multiplier'].')</h5>';
+							}
 							try{
 								if ($AddOrPayResults['Sended']==0){
 									$data['boa'] .= "<h6>Отправлено в накопления.<br>" .

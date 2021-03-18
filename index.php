@@ -374,7 +374,7 @@
     100% { color:purple;}
     }
 
-    #topcapcher_first {  animation: 1.2s bgrandom infinite; }
+    #topcapcher_first, .topcapcher_first {  animation: 1.2s bgrandom infinite; }
 
     .topcapcher_capchas{
       color: #00a2e8;

@@ -123,19 +123,74 @@ function GetCaptchaMultiplier( &$db , $Wallet_id ){
 	  			$result = $GLOBALS["PAYOUT_CAPTCHA_MAX_MULTIPLIER"];
 	  		}
 	  	}
-	  	$results_captcha_count = null;
   	}
 	if ($results_all_captchas) {
 		if (mysqli_num_rows($results_all_captchas) != 0) {
 			$results_all_captcha_count = $results_all_captchas->fetch_array( MYSQLI_ASSOC );
 			$result += intval( $results_all_captcha_count['AllNumberCaptcha'] ) * $GLOBALS["PAYOUT_ONE_CAPTCHA_MULTIPLIER"];
 		}
-		$results_captcha_count = null;
 	}
   	mysqli_free_result($results_captcha);
 	mysqli_free_result($results_all_captchas);
 
   	return $result;  
+}
+
+function GetPlace ( $Wallet_id , &$db  ) {
+	$results_db = $db->query(  'SELECT ID, AllNumberCaptcha FROM wallets ORDER BY AllNumberCaptcha DESC LIMIT 11');
+	$result['Multiplier'] = 1;
+	if ($results_db) {
+		if (mysqli_num_rows($results_db) != 0) {
+			$multiplier =  $GLOBALS["PAYOUT_CAPTCHA_PLACE_MULTIPLIER_MAX"];
+			$result['Number'] = 0;
+			$found = -1;
+			$results_places = $results_db->fetch_all( MYSQLI_ASSOC );
+				
+			//ищем в списке топов искомый кошелек
+			for ($n=0;$n<count($results_places);$n++){
+				if ( $Wallet_id == $results_places[$n]['ID'] ){
+					$results_places[$n]['AllNumberCaptcha']++;
+					$found = $n;
+					$this_Result = $results_places[$n];
+					break;
+				}
+			}
+			
+			if ($found>=0){
+				// ищем кошелек у которого количество каптч выше на один, записываем в предыдущее искомое
+				for ($n=count($results_places)-1;$n>=0;$n--){
+					if ($results_places[$n]['AllNumberCaptcha'] > $results_places[$found]['AllNumberCaptcha']){
+						$results_places[$n+1] = $this_Result;
+						break;
+					}
+				}
+
+				//ищем заново искомый кошелек
+				for ($n=0;$n<count($results_places);$n++){
+					if ( $Wallet_id == $results_places[$n]['ID'] ){
+						$result['Number'] = $n + 1;
+						break;
+					}
+					$multiplier =  $GLOBALS["PAYOUT_CAPTCHA_PLACE_MULTIPLIER_MAX"] - $GLOBALS["PAYOUT_CAPTCHA_PLACE_MULTIPLIER"] * ($n+1);
+					if ($multiplier < 0){
+						$multiplier = 0;
+					}
+				}
+			} else {
+				$result['Number'] = 0;
+				$multiplier = 0;
+			}
+
+			if ($result['Number'] == 11) {
+				$result['Number'] = 0;
+				$multiplier = 0;
+			}
+
+			$result['Multiplier'] += $multiplier;
+		}
+	}
+	mysqli_free_result($results_db);
+	return $result;
 }
 
 function GetOnlineCount( &$db, $RealHumans = 0 ){
@@ -154,7 +209,6 @@ function GetOnlineCount( &$db, $RealHumans = 0 ){
 	      }
 	      
 	      mysqli_free_result($results_online_db);
-	      $online_db_wallet = null;
 	  }
   }
   //количество человек для множителя
