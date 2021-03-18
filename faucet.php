@@ -219,6 +219,9 @@ if ($captcha_success->success==false) {
 						        	$data['balanceChange'] = $AddOrPayResults['SumAmount'];
 
 								}
+								//debug капча спид
+								//$data['boa'] .= 'captchaspeed ' . GetCaptchaSpeed($username_id, $db); 
+
 								// отправка успешного сообщения
 								echo json_encode($data);
 

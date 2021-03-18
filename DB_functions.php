@@ -13,14 +13,32 @@ function CompareTime($timestamp_1, $timestamp_2 = null, $seconds = 300) {
   return intval( $timestamp_1 >= ($timestamp_2 - $seconds) );  
 }
 
+function GetCaptchaSpeed( $Wallet_id, &$db ){
+	$date_now_timestamp = (new DateTime())->getTimestamp();
+	$results = $db->query( 'SELECT CountCaptcha, FirstActive FROM walletsonline WHERE Wallet_ID = '. $Wallet_id );
+	$results_array = $results->fetch_array(MYSQLI_ASSOC);
+	$online_in_seconds = $date_now_timestamp - $results_array['FirstActive'];
+	if ($online_in_seconds == 0) {
+		$return_val = 0;
+	} else {
+		$return_val = ($results_array['CountCaptcha'] / $online_in_seconds);
+	}
+	mysqli_free_result($results);
+	return $return_val;
+}
+
 function GetCapcherName($Wallet_id, &$db){
 	$results = $db->query( 'SELECT Name FROM wallets WHERE ID = '. $Wallet_id );
-	return $results->fetch_array(MYSQLI_NUM)[0];
+	$res = $results->fetch_array(MYSQLI_NUM)[0];
+	mysqli_free_result($results);
+	return $res;
 }
 
 function GetTopCapchers(&$db){
 	$results = $db->query( 'SELECT Name, AllNumberCaptcha FROM wallets ORDER BY AllNumberCaptcha DESC LIMIT 10' );
-	return $results->fetch_all(MYSQLI_ASSOC);
+	$res = $results->fetch_all(MYSQLI_ASSOC);
+	mysqli_free_result($results);
+	return $res;
 }
 
 function UpdateWalletCaptchaCount( $Wallet_id , &$db ){
@@ -30,7 +48,9 @@ function UpdateWalletCaptchaCount( $Wallet_id , &$db ){
 
 function GetWalletbyID ( $Wallet_id , &$db ){
 	$results = $db->query( 'SELECT Wallet FROM wallets WHERE ID = '. $Wallet_id );
-	return $results->fetch_array(MYSQLI_NUM)[0];
+	$res = $results->fetch_array(MYSQLI_NUM)[0];
+	mysqli_free_result($results);
+	return $res;
 
 }
 
@@ -56,6 +76,8 @@ function GetWalletID ( $Wallet , &$db ){
 	if ($isNeedStoreWallet == 1){
 		$WalletID = StoreWalletinDB( $Wallet , $db );
 	}
+
+	mysqli_free_result($results_id);
 
 	return $WalletID;
 }
@@ -88,24 +110,37 @@ function GetHumansNumberMultiplier( &$db ){
 
 function GetCaptchaMultiplier( &$db , $Wallet_id ){
 	
+	$results_all_captchas = $db->query(  'SELECT AllNumberCaptcha FROM wallets WHERE ID = '. $Wallet_id );
 	$results_captcha = $db->query(  'SELECT CountCaptcha FROM walletsonline WHERE Wallet_ID = '. $Wallet_id );
+
 	$result = 1;
+
   	if ($results_captcha) {
-  		$results_captcha_count = $results_captcha->fetch_array( MYSQLI_ASSOC );
 	  	if (mysqli_num_rows($results_captcha) != 0) {
-	  		$result = 1 + intval($results_captcha_count['CountCaptcha']) * $GLOBALS["PAYOUT_MULTIPLIER_CAPTCHA_RATE"];
+			$results_captcha_count = $results_captcha->fetch_array( MYSQLI_ASSOC );
+	  		$result += intval($results_captcha_count['CountCaptcha']) * $GLOBALS["PAYOUT_MULTIPLIER_CAPTCHA_RATE"];
 	  		if ($GLOBALS["PAYOUT_CAPTCHA_MAX_MULTIPLIER"] != 0 && $result >= $GLOBALS["PAYOUT_CAPTCHA_MAX_MULTIPLIER"] ){
 	  			$result = $GLOBALS["PAYOUT_CAPTCHA_MAX_MULTIPLIER"];
 	  		}
 	  	}
 	  	$results_captcha_count = null;
   	}
+	if ($results_all_captchas) {
+		if (mysqli_num_rows($results_all_captchas) != 0) {
+			$results_all_captcha_count = $results_all_captchas->fetch_array( MYSQLI_ASSOC );
+			$result += intval( $results_all_captcha_count['AllNumberCaptcha'] ) * $GLOBALS["PAYOUT_ONE_CAPTCHA_MULTIPLIER"];
+		}
+		$results_captcha_count = null;
+	}
   	mysqli_free_result($results_captcha);
+	mysqli_free_result($results_all_captchas);
+
   	return $result;  
 }
 
 function GetOnlineCount( &$db, $RealHumans = 0 ){
   $result = 0;
+  //общий онлайн + удаление неактивных
   if ($RealHumans == 0){
 	  $results_online_db = $db->query( 'SELECT * FROM walletsonline' );
 	  if ($results_online_db) {
@@ -122,17 +157,30 @@ function GetOnlineCount( &$db, $RealHumans = 0 ){
 	      $online_db_wallet = null;
 	  }
   }
+  //количество человек для множителя
   if ($RealHumans == 1){
-	  $results_online_db_2 = 
-	  		 $db->query( 'SELECT COUNT(*) as Humans FROM walletsonline 
-	  			WHERE CountCaptcha >= '. $GLOBALS["PAYOUT_MIN_NUMBER_CAPTCHA"] );
+	  $date_now_timestamp = (new DateTime())->getTimestamp();
+	  
+	 $results_time_count_captcha = $db->query( 'SELECT CountCaptcha, FirstActive FROM walletsonline 
+	 	WHERE CountCaptcha >= '. $GLOBALS["PAYOUT_MIN_NUMBER_CAPTCHA"] );
 
-	  if ($results_online_db_2) {
-	  		$online_db_wallet_2 = $results_online_db_2->fetch_array( MYSQLI_ASSOC );
-		  	if (mysqli_num_rows($results_online_db_2) != 0) {
-		      $result = intval($online_db_wallet_2['Humans']);
-		      mysqli_free_result($results_online_db_2);
-		      $online_db_wallet_2 = null;
+	  if ($results_time_count_captcha) {
+		  	if (mysqli_num_rows($results_time_count_captcha) != 0) {
+		        
+				while($results_array = $results_time_count_captcha->fetch_array(MYSQLI_ASSOC)){
+					$online_in_seconds = $date_now_timestamp - $results_array['FirstActive'];
+					if ($online_in_seconds == 0) {
+						$return_time_count_captcha_val = 0;
+					} else {
+						$return_time_count_captcha_val = ($results_array['CountCaptcha'] / $online_in_seconds);
+					}
+					if ($return_time_count_captcha_val > $GLOBALS["ONLINE_MULTIPLIER_CAPTCHA_MIN_RATE"]){
+						$result++;
+					}
+				}
+			  
+		    	mysqli_free_result($results_time_count_captcha);
+
 		  }
 	  }
   }
@@ -207,11 +255,13 @@ function SetWalletOnline( &$db_online , $Wallet_id){
 		$CountCaptcha = $CountCaptcha + 1;
 		$db_online->query("UPDATE walletsonline SET LastActive = " . ($date_now->getTimestamp()) . ", CountCaptcha = " . $CountCaptcha . " WHERE ID = ". $result['ID'] );
 	} else {
-		$db_online->query('INSERT INTO walletsonline ( Wallet_ID, LastActive, CountCaptcha ) 
-    	VALUES ( '. $Wallet_id .', '. ($date_now->getTimestamp()) .', 1 ) ');
+		$db_online->query('INSERT INTO walletsonline ( Wallet_ID, FirstActive, LastActive, CountCaptcha ) 
+    	VALUES ( '. $Wallet_id .', '. ($date_now->getTimestamp()) .', ' . ($date_now->getTimestamp()) . ', 1 ) ');
 	}
+	mysqli_free_result($query);
 }
 
+//проверка чтобы активность не превышала 5 секунд
 function CheckOnlineTime( &$db_online, $Wallet_id ) {
 
 	$date_now = new DateTime();
@@ -220,10 +270,11 @@ function CheckOnlineTime( &$db_online, $Wallet_id ) {
 	$result = $query->fetch_array(MYSQLI_ASSOC);
 	$num = mysqli_num_rows($query);
 	if($num) {
-		if ( ( ( $date_now->getTimestamp() ) - $result['LastActive'] ) <=5 ) {
+		if ( ( ( $date_now->getTimestamp() ) - $result['LastActive'] ) <= 5 ) {
 			return 0;
 		}
 	} 
+	mysqli_free_result($query);
 	return 1;
 }
 
