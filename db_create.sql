@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost:3306
--- Generation Time: Mar 16, 2021 at 12:55 PM
+-- Generation Time: Mar 18, 2021 at 12:30 AM
 -- Server version: 5.7.33-0ubuntu0.18.04.1-log
 -- PHP Version: 7.2.24-0ubuntu0.18.04.7
 
@@ -7036,6 +7036,7 @@ CREATE TABLE `wallets` (
 CREATE TABLE `walletsonline` (
   `ID` int(11) NOT NULL,
   `Wallet_ID` int(11) NOT NULL,
+  `FirstActive` int(11) DEFAULT NULL,
   `LastActive` int(11) NOT NULL,
   `CountCaptcha` int(11) NOT NULL DEFAULT '1'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
@@ -7104,12 +7105,12 @@ ALTER TABLE `first_word`
 -- AUTO_INCREMENT for table `rolls`
 --
 ALTER TABLE `rolls`
-  MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3873;
+  MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8354;
 --
 -- AUTO_INCREMENT for table `rollsarchive`
 --
 ALTER TABLE `rollsarchive`
-  MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=215;
+  MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=255;
 --
 -- AUTO_INCREMENT for table `second_word`
 --
@@ -7124,12 +7125,12 @@ ALTER TABLE `third_word`
 -- AUTO_INCREMENT for table `wallets`
 --
 ALTER TABLE `wallets`
-  MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=156;
+  MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=179;
 --
 -- AUTO_INCREMENT for table `walletsonline`
 --
 ALTER TABLE `walletsonline`
-  MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=49;
+  MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=243;
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
