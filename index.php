@@ -18,7 +18,7 @@
   require_once("server_config.php");  
   require_once("DB_functions.php");
 
-  $last_thread_link = 'https://2ch.hk/cc/res/564347.html';
+  $last_thread_link = 'https://2ch.hk/cc/res/573720.html';
 
   // получение баланса, проверка на подключение к кошельку
   $RPC = new BaseJsonRpcClient($GLOBALS["RPC_URL"]);
@@ -409,6 +409,12 @@
     .alert{
       width:max-content !important;
     }
+    #wasted{
+      line-height: 1.5em;
+      color: #ff6600;
+      text-decoration:none !important;
+      font-size: 12px;
+    }
 </style>
 
 
@@ -587,11 +593,15 @@
 
 <div class="faucet_block" id="faucet_footer">
 
-<h4 align="center" ><a href="https://2chpool.cc/workers/Ye2NDKfp53WV6zG5GPnuCRdkPDicenBEY9" title="Вкинуться">
+<h4 align="center" ><a href="https://2chpool.cc/workers/Ye2NDKfp53WV6zG5GPnuCRdkPDicenBEY9" title="Оживить">
     <?php 
       	echo $faucet_balance;
+        if ($db){
+            echo '<div id="wasted">Потрачено '. number_format( round (GetWasted ( $db ) , 2 ) , 2 ) .' енотов</div>';
+        }
     ?>
  </a></h4>
+ 
 
 <h6 align="center">
   <?php     
@@ -631,9 +641,7 @@
 <h6 align="center" style="color: #ccc;line-height: 1.5px;">
   * Накопления будут отправлены при достижении в <?php echo $GLOBALS["PAYOUT_LIMIT"]; ?> енотов или при выигрыше.
 </h6>
-<h6 align="center" style="color: #ccc;line-height: 1.5px;">
-  ** Когда закончится баланс, накопления и ошибки будут обработаны в ручном режиме, спустя какое-то время!
-</h6>
+
   <div id="player"></div>
 
 </div>

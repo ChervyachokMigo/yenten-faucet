@@ -136,6 +136,18 @@ function GetCaptchaMultiplier( &$db , $Wallet_id ){
   	return $result;  
 }
 
+function GetWasted ( &$db ) {
+	$results_db = $db->query(  'SELECT SUM(SumAmount) FROM rollsarchive');
+	$result = -1;
+	if ($results_db) {
+		if (mysqli_num_rows($results_db) != 0) {
+			$result = $results_db->fetch_array(MYSQLI_NUM)[0] / $GLOBALS['DB_COINS_ACCURACCY'];
+		}
+	}
+	mysqli_free_result($results_db);
+	return $result;
+}
+
 function GetPlace ( $Wallet_id , &$db  ) {
 	$results_db = $db->query(  'SELECT ID, AllNumberCaptcha FROM wallets ORDER BY AllNumberCaptcha DESC LIMIT 11');
 	$result['Multiplier'] = 1;

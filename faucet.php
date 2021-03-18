@@ -179,7 +179,7 @@ if ($captcha_success->success==false) {
 												"Накоплено: <a 
 												title=\"Накопления будут отправлены при достижении в ".$GLOBALS["PAYOUT_LIMIT"]." енотов или при выигрыше.\" href=\"http://2ch-yenten-faucet.ml/#\">" . 
 												round($AddOrPayResults['SumAmount'],2) . 
-												"</a> енотов *</h6><br>";
+												"</a> енотов</h6><br>";
 
 									$data['balanceChange'] = $payout_yentens;
 
