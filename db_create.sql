@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost:3306
--- Generation Time: Mar 18, 2021 at 12:30 AM
+-- Generation Time: Mar 20, 2021 at 07:30 PM
 -- Server version: 5.7.33-0ubuntu0.18.04.1-log
 -- PHP Version: 7.2.24-0ubuntu0.18.04.7
 
@@ -7041,6 +7041,21 @@ CREATE TABLE `walletsonline` (
   `CountCaptcha` int(11) NOT NULL DEFAULT '1'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `winners`
+--
+
+CREATE TABLE `winners` (
+  `ID` int(11) NOT NULL,
+  `Wallet_ID` int(11) NOT NULL,
+  `Win_ID` text COLLATE utf8mb4_unicode_ci NOT NULL,
+  `Amount` int(16) NOT NULL,
+  `Commentary` text COLLATE utf8mb4_unicode_ci NOT NULL,
+  `Time` int(11) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
 --
 -- Indexes for dumped tables
 --
@@ -7093,6 +7108,12 @@ ALTER TABLE `walletsonline`
   ADD PRIMARY KEY (`ID`);
 
 --
+-- Indexes for table `winners`
+--
+ALTER TABLE `winners`
+  ADD UNIQUE KEY `ID` (`ID`);
+
+--
 -- AUTO_INCREMENT for dumped tables
 --
 
@@ -7105,12 +7126,12 @@ ALTER TABLE `first_word`
 -- AUTO_INCREMENT for table `rolls`
 --
 ALTER TABLE `rolls`
-  MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8354;
+  MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=14041;
 --
 -- AUTO_INCREMENT for table `rollsarchive`
 --
 ALTER TABLE `rollsarchive`
-  MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=255;
+  MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=323;
 --
 -- AUTO_INCREMENT for table `second_word`
 --
@@ -7125,12 +7146,17 @@ ALTER TABLE `third_word`
 -- AUTO_INCREMENT for table `wallets`
 --
 ALTER TABLE `wallets`
-  MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=179;
+  MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=201;
 --
 -- AUTO_INCREMENT for table `walletsonline`
 --
 ALTER TABLE `walletsonline`
-  MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=243;
+  MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=494;
+--
+-- AUTO_INCREMENT for table `winners`
+--
+ALTER TABLE `winners`
+  MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=29;
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
