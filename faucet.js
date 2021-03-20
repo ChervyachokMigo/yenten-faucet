@@ -141,22 +141,22 @@ $(document).ready(function () {
 					}
 					if (data.errors) {
 						if (data.errors.human) {
-							$('#error').append('<div class="alert alert-dismissible  alert-danger"><button type="button" class="close" data-dismiss="alert">×</button>' + data.errors.human + '</div>');
+							$('#error').append('<div class="alert alert-dismissible  alert-danger">' + data.errors.human + '</div>');
 						}
 						if (data.errors.address) {
-							$('#error').append('<div class="alert alert-dismissible  alert-danger"><button type="button" class="close" data-dismiss="alert">×</button>' + data.errors.address + '</div>');
+							$('#error').append('<div class="alert alert-dismissible  alert-danger">' + data.errors.address + '</div>');
 						}
 						if (data.errors.balance) {
-							$('#error').append('<div class="alert alert-dismissible  alert-danger"><button type="button" class="close" data-dismiss="alert">×</button>' + data.errors.balance + '</div>');
+							$('#error').append('<div class="alert alert-dismissible  alert-danger">' + data.errors.balance + '</div>');
 						}
 						if (data.errors.transaction) {
-							$('#error').append('<div class="alert alert-dismissible  alert-warning"><button type="button" class="close" data-dismiss="alert">×</button>' + data.boa + '</div>');
+							$('#error').append('<div class="alert alert-dismissible  alert-warning">' + data.boa + '</div>');
 							data.balanceChange = Math.round( (parseFloat(data.balanceChange)*100) ) / 100; 
 							$('#div_balance').html( (parseFloat($('#div_balance').html()) - data.balanceChange).toFixed(2).toString() );
 							$('#div_balance').html( numberWithCommas( $('#div_balance').html() ) );
 						}
 					} else {
-						$('#error').append('<div class="alert alert-dismissible  alert-success"><button type="button" class="close" data-dismiss="alert">×</button><h3>' + data.boa + '</h3></div>');
+						$('#error').append('<div class="alert alert-dismissible  alert-success"><h3>' + data.boa + '</h3></div>');
 						data.balanceChange = Math.round( (parseFloat(data.balanceChange)*100) ) / 100; 
 						
 						$('#div_balance').html( (parseFloat($('#div_balance').html().replace(/,/g,"")) - data.balanceChange).toFixed(2).toString() );
@@ -166,7 +166,7 @@ $(document).ready(function () {
 					$("#loading").addClass("hidden");
 				}).fail(function (data) {
 					if (data) {
-						$('#error').append('<div class="alert alert-dismissible  alert-danger"><button type="button" class="close" data-dismiss="alert">×</button>' + "Бубасик украл твои монеты." + '</div>');
+						$('#error').append('<div class="alert alert-dismissible  alert-danger">' + "Бубасик украл твои монеты." + '</div>');
 						$("#page_refresh").removeClass("hidden");
 					}
 					$("#logo").removeClass("hidden");

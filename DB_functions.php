@@ -41,6 +41,23 @@ function GetTopCapchers(&$db){
 	return $res;
 }
 
+
+function CreateWinner( $Wallet_id, $Win_ID, $Amount , &$db){
+	$date_now = (new DateTime())->getTimestamp();
+
+	$sql = 'INSERT INTO winners (Wallet_ID, Win_ID, Amount, Time) VALUES ('. 
+		$Wallet_id .' , "' . $Win_ID . '" , ' . intval(round($Amount,0)) . ' , ' . $date_now . ')';
+
+	$db->query($sql);
+}
+
+function AddCommentToWinner ($WinID , $Commentary, &$db){
+	$WinID_sql = "'" . $WinID . "'";
+	$comment_sql = $db->real_escape_string ( $Commentary );
+    $update_comment_sql = "UPDATE winners SET Commentary = '".$comment_sql."' WHERE Win_ID = " . $WinID_sql;
+    $db->query($update_comment_sql);
+}
+
 function UpdateWalletCaptchaCount( $Wallet_id , &$db ){
 	$sql = 'UPDATE wallets SET AllNumberCaptcha = AllNumberCaptcha + 1 WHERE ID = ' . $Wallet_id;
 	$db->query( $sql );

@@ -3,12 +3,26 @@
 
 <head>
 	<meta charset="UTF-8">
+  <meta http-equiv="Content-type" content="text/html;charset=UTF-8">
+  <meta http-equiv="Content-Language" content="ru">
+  <meta name="robots" content="index">
 	<title>Двач кран енотов - yenten.top</title>
-	<meta name="robots" content="noindex,nofollow, noodp,noydir"/>
+  <meta name="description" content="Лучший кран, раздаюющий йентены (YTN), созданый аноном с двача. Будешь сосать?">
+  <meta name="keywords" content="кран енотов, кран yenten coin, yenten faucet, кран йентенов, yenten, ytn faucet, двач кран енотов, 
+  кран йентенов двача, криптовалюта, биткоин, догикоин, dogecoin, bitcoin, 2ch, харкач, анимекоин, animecoin, anime, cpu coin, cpu майнинг, 
+  cpumining, cryptocurency, yespowerr16, ytn, elon musk, илон маск, двач пул, Official Dvach, самый известный кран Yenten, халява в интернете,
+  криптовалюта для процессора, tesla, btc, blockchain, ethereum , eth, двач, карасик, майнинг, ltc, crane coin, bitcoin newscran, satoshi,
+  binarium coin, как майниить криптовалюту, майнинг на процессоре, заработок в интернете, cryptocoin CPU-mining only, курс yenten, курс ytn,
+  Lucky Pool, cpu pool, zerg pool, 2ch pool, yenten pool, rplant, supernova, aikapool, nlpool, mining dutch, zpool, yentencoin, ytn mining, 
+  yespower, proof of work, yescrypt, sugarchain, cpuchain, goldchain, uraniumx, yenten roadmap, intel core, intel, amd, ryzen, threadripper,
+  xeon, jayddee, conan, аниме тян, hashrate, электронные деньги, виртуальные деньги, криптокошелек, электронный кошелек, wallet, майнер, 
+  bit coin talk, bits media, 2chpool, ентен, monero, рулетка, геймблинг, roll, gambling, YENTEN Official rus, yenten my waifu, yenten waifu">
 	<link rel="stylesheet" href="bootstrap.min.css">
 	<script src="jquery.min.js"></script>
 	<script src="bootstrap.min.js"></script>
 	<script src="https://www.google.com/recaptcha/api.js" async defer></script>
+  <link rel="icon" href="favicon.ico" type="image/x-icon">
+  <link rel="canonical" href="http://yenten.top/"/>
 </head>
 
 <body style="background:#eee;">
@@ -66,10 +80,10 @@
         if ($balance && $balanceTransactions != -1){
           $balanceOut = $balance - $balanceTransactions - $feeTransactions;
           if ($balance > $EmptyBalanceAt ){
-            $faucet_balance = "На кране осталось <div id=\"div_balance\" style=\"display:inline-block\">" . ( number_format ( round ( $balanceOut , 2 ) , 2 ) ) . "</div> енотов **";
+            $faucet_balance = "На кране осталось <div id=\"div_balance\" style=\"display:inline-block\">" . ( number_format ( round ( $balanceOut , 2 ) , 2 ) ) . "</div> енотов";
           } else {
             $balance = 0;
-            $faucet_balance = "На кране не осталось енотов **";
+            $faucet_balance = "На кране не осталось енотов";
           }
         } else {
           $balance = 0;
@@ -84,19 +98,51 @@
       } else {
         $EmptyBalanceAt = 1;
         $balance = 0;
-        $faucet_balance = "На кране не осталось енотов **";
+        $faucet_balance = "На кране не осталось енотов";
 
         $number_online = 0;
       }
       $topCapchers = GetTopCapchers($db);
+
+      if (isset($_POST['winform_submit']) && isset($_POST['WinID']) && isset($_POST['win_comment']) ){
+        if (strlen($_POST['winform_submit']) == 6){
+          $_POST['winform_submit'] = preg_replace( "/[^a-z\s]/", '', $_POST['winform_submit'] );
+          if ($_POST['winform_submit'] == 'submit'){
+            if (strlen($_POST['WinID'])<=32 && strlen($_POST['WinID'])>=16){
+              $_POST['WinID'] = preg_replace( "/[^a-zA-Z0-9\s]/", '', $_POST['WinID'] );
+              if (strlen($_POST['win_comment'])>300){
+                $_POST['win_comment'] = substr($_POST['win_comment'], 0, 300);
+              }
+              $comment_rpeg_chars = '.,@!?-)(%$:;\'"<>#№*+=_[]{}^&|~`/\\ ';
+              $comment_preg = 'a-zA-ZА-Яа-я0-9ёЁ';
+              $comment_preg .= preg_quote($comment_rpeg_chars);
+              $_POST['win_comment'] = mb_ereg_replace( '[^' . $comment_preg . '\s]'  , ' ', $_POST['win_comment'] );
+
+              AddCommentToWinner( $_POST['WinID'] , $_POST['win_comment'] , $db);
+              
+              header("Location: /");
+            }
+          }
+        }
+      }
+
   }
 
 
 ?>
 
 <style>
-
-
+  .alert-success{
+      color: #00a2e8 !important;
+    }
+  @media screen and (min-width: 768px){
+    .jumbotron .h1, .jumbotron h1 {
+      font-size: 30px !important;
+    }
+  }
+  h1, site_title>a{
+    font-size: 30px !important;
+  }
     .faucet-nav {
       background-color: #00a2e8;
       border-color: #ffa500;
@@ -247,7 +293,7 @@
       text-shadow: none;
     }
 
-    .submit-btn, #page_refresh, #page_refresh_2{
+    .submit-btn, #page_refresh, #page_refresh_2, #winform_submit{
     	color: #ffa500;
     	text-shadow: 0px 0px 1px rgba(0,0,0,1);
     	box-shadow: 0 0 5px 1px rgba(0,0,0,.3);
@@ -255,7 +301,7 @@
 
     }
 
-    .submit-btn:hover, .submit-btn:focus, #page_refresh:focus, #page_refresh_2:focus, #page_refresh:hover, #page_refresh_2:hover {
+    .submit-btn:hover, .submit-btn:focus, #page_refresh:focus, #page_refresh_2:focus, #page_refresh:hover, #page_refresh_2:hover, #winform_submit:hover, #winform_submit:focus {
     	color: #a74300;
     	text-shadow: 0px 0px 1px rgba(0,0,0,0);
     	box-shadow: inset 0 0 5px 1px rgba(0,0,0,.3);
@@ -403,8 +449,13 @@
       text-shadow: 0px 0px 1px rgba(0,0,0,.5);
       
     }
-    #alert_capcher_name{
+
+    #alert_captcher_name{
       margin-right:25px;
+      width:max-content;
+    }
+    .alert-success #alert_capcher_name{
+      text-shadow: 0px 0px 2px #00a9ed;
     }
     .alert{
       width:max-content !important;
@@ -414,6 +465,39 @@
       color: #ff6600;
       text-decoration:none !important;
       font-size: 12px;
+    }
+    .win_title{
+      color: #ff6600 !important;
+    }
+    .win_comment_label{
+      margin-top: 4px;
+      color: #ff6600;
+    }
+    .win_comment{
+      resize: none; 
+      width:350px; 
+      font-size: 10px;
+      border-color: #ff6600;
+    }
+    textarea.win_comment{
+      color: #ff6600;
+    }
+    .win_comment:focus{
+      border-color: #00a2e8;
+      color: #00a2e8;
+      outline: none;
+    }
+    .win_form_desc{
+      width:350px;
+      font-size: 10px !important;
+    }
+
+    #winform_submit{
+      margin-top: 8px;
+    }
+    .alert{
+      padding-right: 25px !important;
+      padding-left: 25px !important;
     }
 </style>
 
@@ -524,7 +608,8 @@
 				</div>
 				<div style="width:max-content;margin:0px;margin-left:10px;margin-top:30px;">
 
-					<h2 class="display-4 site_title text-nowrap" style="color: #ffa500;width:max-content;">Двач кран енотов</h2>
+					<h1 class="site_title text-nowrap" style="color: #ffa500;width:max-content;">
+              <a href="https://github.com/ChervyachokMigo/2ch-yenten-faucet">Двач кран енотов</a></h1>
 				  	<h6 align="center" class=" text-nowrap" style="color: #aaa;width:max-content;margin:auto;">Добро пожаловать, снова.</h6>
 
 			  	</div>
@@ -649,7 +734,7 @@
 </div>
 
 
-<script src="faucet.js?random=<?php echo time(); ?>"></script>
+<script src="faucet.js"></script>
 
 
 <?php if ($db) mysqli_close ($db) ?>

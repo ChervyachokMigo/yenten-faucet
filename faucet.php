@@ -171,21 +171,41 @@ if ($captcha_success->success==false) {
 							if ($user_Place['Number']>0 && $user_Place['Number']!=1){
 								$data['boa'] .= '<h5>Вы на '. $user_Place['Number'] .' месте капчесосов (x'.$user_Place['Multiplier'].')</h5>';
 							} elseif ($user_Place['Number']==1){
-								$data['boa'] .= '<h5 class="topcapcher_first">Вы на '. $user_Place['Number'] .' месте капчесосов (x'.$user_Place['Multiplier'].')</h5>';
+								$data['boa'] .= '<h4 class="topcapcher_first">Вы на '. $user_Place['Number'] .' месте капчесосов (x'.$user_Place['Multiplier'].')</h4>';
 							}
 							try{
+								$data['isWin'] = 0;
 								if ($AddOrPayResults['Sended']==0){
 									$data['boa'] .= "<h6>Отправлено в накопления.<br>" .
 												"Накоплено: <a 
 												title=\"Накопления будут отправлены при достижении в ".$GLOBALS["PAYOUT_LIMIT"]." енотов или при выигрыше.\" href=\"http://2ch-yenten-faucet.ml/#\">" . 
 												round($AddOrPayResults['SumAmount'],2) . 
 												"</a> енотов</h6><br>";
+									
 
 									$data['balanceChange'] = $payout_yentens;
 
 								} else {
 									if ($AddOrPayResults['Sended']==2) {
-										$data['boa'] .= "<h4>Вы выиграли!</h4><br>"; }
+										$WinID_chars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+										$WinID = "";
+										$WinChars = rand(16,32);
+										for($i=0; $i<$WinChars; $i++){
+											$WinID .= $WinID_chars[ rand( 0 , strlen($WinID_chars)-1 ) ];
+										}
+										$winform_html = '<form id="win_form" method="post" action="index.php">
+											<textarea placeholder="Введите текст" name="win_comment" cols="50" rows="6" required maxlength="300" class="win_comment"></textarea><br>
+											<input type="hidden" name="WinID" value="' . $WinID . '">
+											<button type="submit" id="winform_submit" class="btn" name="winform_submit" value="submit">Отправить</button>
+										</form>';
+										$data['boa'] .= '<h4 class="win_title">Вы выиграли!</h4><p class="win_form_desc">Вы можете прикрепить ваше сообщение, и оно отобразится в выигрышах.<br>
+										Если ничего не отправить, выигрыш будет никак не прокомментирован.<br>Не используйте противозаконные, спам, рекламные, использующие мат выражения!</p><label for="wincomment" class="win_comment_label">Комментарий</label>'.$winform_html.'<br>'; 
+										$data['isWin'] = 1;
+										
+										CreateWinner( $username_id , $WinID , $payout_yentens * $GLOBALS['DB_COINS_ACCURACCY'] , $db );
+										error_log( "(faucet.php) WINNER - " . $username . " , WinID: ". $WinID . " Amount " . $payout_yentens ."\n" );
+									}
+
 
 									// отсылаем монеты на адрес
 					        	   
@@ -216,7 +236,7 @@ if ($captcha_success->success==false) {
 						        				" transaction: " . $transucktion_id . "\n" );
 						        		}
 						        	} else {	//если транзакция зафейлилась
-						        		$data['boa'] .= "<h4>Будет выплачено <a href=\"http://2ch-yenten-faucet.ml/#\">" . round($AddOrPayResults['SumAmount'],2) . "</a> енотов в ручном режиме.</h4><br><h6>Не удалось провести транзакцию.</h6><br>";
+						        		$data['boa'] .= "<h4 style='width: 350px;'>Будет выплачено <a href=\"http://2ch-yenten-faucet.ml/#\">" . round($AddOrPayResults['SumAmount'],2) . "</a> енотов в ручном режиме.</h4><br><h6>Не удалось провести транзакцию.</h6><br>";
 										$errors['transaction'] = 'Не удалось провести транзакцию.';
 										$data['errors'] = true;
 										$data['errors']  = $errors;

@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+Host: yenten.top
+Sitemap: http://yenten.top/sitemap.xml
