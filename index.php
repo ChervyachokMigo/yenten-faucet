@@ -23,6 +23,7 @@
 	<script src="https://www.google.com/recaptcha/api.js" async defer></script>
   <link rel="icon" href="favicon.ico" type="image/x-icon">
   <link rel="canonical" href="http://yenten.top/"/>
+  <meta name="viewport" content="width=device-width, initial-scale=0.57">
 </head>
 
 <body style="background:#eee;">
@@ -102,7 +103,10 @@
 
         $number_online = 0;
       }
-      $topCapchers = GetTopCapchers($db);
+
+      $topCapchers = GetTopCapchers( $db );
+
+      $Winners = GetLastWinners( $db );
 
       if (isset($_POST['winform_submit']) && isset($_POST['WinID']) && isset($_POST['win_comment']) ){
         if (strlen($_POST['winform_submit']) == 6){
@@ -113,10 +117,6 @@
               if (strlen($_POST['win_comment'])>300){
                 $_POST['win_comment'] = substr($_POST['win_comment'], 0, 300);
               }
-              $comment_rpeg_chars = '.,@!?-)(%$:;\'"<>#№*+=_[]{}^&|~`/\\ ';
-              $comment_preg = 'a-zA-ZА-Яа-я0-9ёЁ';
-              $comment_preg .= preg_quote($comment_rpeg_chars);
-              $_POST['win_comment'] = mb_ereg_replace( '[^' . $comment_preg . '\s]'  , ' ', $_POST['win_comment'] );
 
               AddCommentToWinner( $_POST['WinID'] , $_POST['win_comment'] , $db);
               
@@ -359,7 +359,7 @@
     z-index:1000;
     width:max-content;
   }
-  .top_capchers>butto {
+  .top_capchers>button {
     border-top-left-radius: 4px;
     border-bottom-left-radius: 4px;
   }
@@ -499,6 +499,71 @@
       padding-right: 25px !important;
       padding-left: 25px !important;
     }
+
+    .winners_btn {
+      position:fixed;
+      top:104px;
+      right:5px;
+      z-index:1000;
+      width:max-content;
+    }
+    .winners_btn>button{
+      border-top-left-radius: 4px;
+      border-bottom-left-radius: 4px;
+    }
+    .winners_btn>.dropdown-menu {
+      position:relative;
+      left:-5px;
+      padding-bottom: 0px;
+    }
+    .winners {
+      width:350px;
+      display:block;
+      float:right;
+      margin-left:10px;
+      margin-right:15px;
+    }
+    .winners_item {
+      margin:5px;
+      padding:0;
+
+      background:inherit;
+      border-bottom-style: ridge;
+      border-radius: 0;
+      border-width: thin;
+      border-bottom-color: rgba(0,0,0,.04);
+    }
+    @media screen and (max-width: 768px) {
+      .winners{
+        top:110px;
+      }
+    }
+    @media screen and (min-width: 769px) {
+      .winners{
+        top:60px;
+      }
+    }
+    .winners_name {
+      text-shadow: 0px 0px 1px rgba(0,0,0,.7);
+      display: inline-block;
+    }
+    .winners_commentary {
+      color: #00a2e8;
+      text-shadow: 0px 0px 1px rgba(0,0,0,.7);
+      word-break: break-word;
+    }
+    .winners_amount{
+      display: inline-block;
+      float: right;
+      color: #ff6600;
+    }
+    .winners_container{
+      margin-bottom: 10px;
+      outline-style: solid;
+      outline-width: thin;
+      outline-offset: 3px;
+      outline-color: #d1d1d1;
+    }
 </style>
 
 
@@ -589,8 +654,41 @@
   <button type="button" class="right_panel_btn dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
     Топ капчесосов
   </button>
-  
 </div>
+
+<div class="btn-group dropleft winners_btn">
+  <div class="dropdown-menu">
+    <div class="winners">
+      <?php
+        if ( count($Winners)>0 ){
+          foreach ( $Winners as $WinnersEach){
+            echo '<div class="winners_container">';
+            $colors = array('red','orange','olive','lime','green','aqua','blue','navy','teal','fuchsia','purple','maroon');
+            echo '<div class="winners_item dropdown-item list-group-item">';
+            
+            echo  '<div class="winners_name" style="color:'. $colors[ rand( 0, count($colors)-1 ) ] .';">';
+            echo  $WinnersEach['Name'].'</div>';
+
+            echo '<div class="winners_amount">'.number_format($WinnersEach['Amount']/$GLOBALS['DB_COINS_ACCURACCY'],2).'</div>';
+
+            $WinnersEach['Commentary'] = htmlspecialchars($WinnersEach['Commentary'],ENT_HTML5,"UTF-8");
+            $WinnersEach['Commentary'] = str_replace(array('^a1','^a2','^a3'), array('<a href="','">','</a>'),  $WinnersEach['Commentary']);
+            
+            echo  '<div class="winners_commentary">'.$WinnersEach['Commentary'].'</div>';
+            
+            echo '</div>';
+
+            echo '</div>';
+          }
+        }
+      ?>
+      </div>
+    </div>
+  <button type="button" class="right_panel_btn dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+    Выигрыши
+  </button>
+</div>
+
 
 <div class="container" role="main">
 	<div class="jumbotron" style="padding-top:80px;padding-bottom: 0;margin-bottom: 10px;">

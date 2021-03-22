@@ -13,6 +13,12 @@ function CompareTime($timestamp_1, $timestamp_2 = null, $seconds = 300) {
   return intval( $timestamp_1 >= ($timestamp_2 - $seconds) );  
 }
 
+function GetLastWinners( &$db ) {
+	$results = $db->query( 'SELECT wallets.Name as Name, winners.Amount as Amount, winners.Commentary as Commentary	FROM winners
+							INNER JOIN wallets ON wallets.ID = winners.Wallet_ID ORDER BY winners.Time DESC LIMIT 10 ' );
+	return $results->fetch_all(MYSQLI_ASSOC);
+}
+
 function GetCaptchaSpeed( $Wallet_id, &$db ){
 	$date_now_timestamp = (new DateTime())->getTimestamp();
 	$results = $db->query( 'SELECT CountCaptcha, FirstActive FROM walletsonline WHERE Wallet_ID = '. $Wallet_id );
@@ -44,7 +50,7 @@ function GetTopCapchers(&$db){
 
 function CreateWinner( $Wallet_id, $Win_ID, $Amount , &$db){
 	$date_now = (new DateTime())->getTimestamp();
-
+	
 	$sql = 'INSERT INTO winners (Wallet_ID, Win_ID, Amount, Time) VALUES ('. 
 		$Wallet_id .' , "' . $Win_ID . '" , ' . intval(round($Amount,0)) . ' , ' . $date_now . ')';
 
@@ -53,6 +59,12 @@ function CreateWinner( $Wallet_id, $Win_ID, $Amount , &$db){
 
 function AddCommentToWinner ($WinID , $Commentary, &$db){
 	$WinID_sql = "'" . $WinID . "'";
+	$comment_rpeg_chars = '.,@!?-)(%$:;\'"<>#№*+=_[]{}^&|~`/\\ ';
+	$comment_preg = 'a-zA-ZА-Яа-я0-9ёЁ';
+	$comment_preg .= preg_quote($comment_rpeg_chars);
+	$Commentary = str_replace(array('^a1','^a2','^a3'),'',$Commentary);
+	$Commentary = preg_replace("/<a\s+href=['\"]([^'\"]+)['\"][^\>]*>([^<]+)<\/a>/iu",'^a1$1^a2$2^a3', $Commentary);
+	$Commentary = mb_ereg_replace( '[^' . $comment_preg . '\s]'  , ' ', $Commentary );
 	$comment_sql = $db->real_escape_string ( $Commentary );
     $update_comment_sql = "UPDATE winners SET Commentary = '".$comment_sql."' WHERE Win_ID = " . $WinID_sql;
     $db->query($update_comment_sql);
