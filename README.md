@@ -54,3 +54,5 @@
 * добавил бонус за места
 
 * добавил сообщения за выигрыши
+
+<img src="https://github.com/ChervyachokMigo/2ch-yenten-faucet/blob/master/1554054001_ezgif-5-4a52584cd17a.gif">
