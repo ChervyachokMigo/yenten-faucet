@@ -673,7 +673,12 @@
 
             $WinnersEach['Commentary'] = htmlspecialchars($WinnersEach['Commentary'],ENT_HTML5,"UTF-8");
             $WinnersEach['Commentary'] = str_replace(array('^a1','^a2','^a3'), array('<a href="','">','</a>'),  $WinnersEach['Commentary']);
-            
+            $WinnersEach['Commentary'] = str_replace(array('^img1','^img2'), array('<img src="','">'),  $WinnersEach['Commentary']);
+
+            if (strpos($WinnersEach['Commentary'], 'спасибо')!==false || strpos($WinnersEach['Commentary'], 'Спасибо')!==false || strpos($WinnersEach['Commentary'], 'spasibo')!==false || strpos($WinnersEach['Commentary'], 'Spasibo')!==false  ){
+              $WinnersEach['Commentary'].= '<br><span style="color: red;display: block;padding-top: 10px;">Абу благословил этот пост!</span>';
+            }
+
             echo  '<div class="winners_commentary">'.$WinnersEach['Commentary'].'</div>';
             
             echo '</div>';
