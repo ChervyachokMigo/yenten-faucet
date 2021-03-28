@@ -3,6 +3,8 @@
 
 Работает в данный момент на: <a href="http://2ch-yenten-faucet.ml">2ch-yenten-faucet.ml</a> и <a href="http://yenten.top">yenten.top</a>
 
+<img src="https://github.com/ChervyachokMigo/2ch-yenten-faucet/blob/master/logo.png?raw=true">
+
 ### Последние изменения
 
 * server_config.php - все настрйоки объеденены в один файл.
