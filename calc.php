@@ -50,6 +50,8 @@ if ($isDebug == 0 || $isDebug == 1){
     $amount = $amount * $rare_multiplier;
     $chance = $chance * $rare_multiplier;
 
+    $amount = $amount * $payout_course_multiplier;
+
 	$payout_yentens = $amount / $GLOBALS["PAYOUT_AMOUNT_MULTIPLIER"];
 
 	//// end calculation
