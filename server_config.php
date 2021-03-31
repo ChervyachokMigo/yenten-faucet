@@ -44,7 +44,6 @@ $GLOBALS['FEE_AMOUNT'] = 0.01;
 $GLOBALS["PAYOUT_LIMIT"] = 10;					// количество накоплений для выплаты (в йентенах)
 $GLOBALS["PAYOUT_WIN_LIMIT"] = 0.75;				// 1 - не выплачивать, 0 - выплачивать всегда
 
-
 /////////////////////////////////////////////////////////////////////////////////////
 /////////////////////////// рейты для гемблинга /////////////////////////////////////
 $GLOBALS["PAYOUT_MIN"] = 25;	//100					//дефолтный ролл минимум
@@ -57,6 +56,7 @@ $GLOBALS["PAYOUT_LUCKY_MULTIPLIER"] = 1.9;		//x1-infinity
 $GLOBALS["PAYOUT_RARE_MULTIPLIER"] = 4;			//x1-infinity
 $GLOBALS["PAYOUT_RARE_CHANCE"] = 3;				//0.01-100%
 
+
 //бонусы за капчу
 $GLOBALS["PAYOUT_MULTIPLIER_CAPTCHA_RATE"] = 0.00417;		//множитель за одну капчу
 $GLOBALS["PAYOUT_CAPTCHA_MAX_MULTIPLIER"] = 2;		// максимайльный множитель за капчи, 0 без лимита
@@ -65,6 +65,9 @@ $GLOBALS["ONLINE_MULTIPLIER_CAPTCHA_MIN_RATE"] = 0.033;	//коэфициент �
 $GLOBALS["PAYOUT_CAPTCHA_PLACE_MULTIPLIER_MAX"] = 0.5; //	икс за первое место (1 + 1)
 $GLOBALS["PAYOUT_CAPTCHA_PLACE_MULTIPLIER"] = 0.05;	// на сколько уменьшается следующее вниз место
 
+//курс
+$GLOBALS['PAYOUT_COURSE_MIN'] = 0.26;	//YTN/RUB
+$GLOBALS['PAYOUT_COURSE_NOW'] = 0.51;
 
 //бонус за людей на сайте
 $GLOBALS["PAYOUT_MIN_NUMBER_CAPTCHA"] = 16;		//минимально капчей, чтобы они начались считаться
@@ -72,6 +75,8 @@ $GLOBALS["PAYOUT_MIN_NUMBER_CAPTCHA"] = 16;		//минимально капчей
 $GLOBALS["PAYOUT_RATE_PER_HUMAN"] = 0.066;	// 0 - inlinity (recomended)
 $GLOBALS["PAYOUT_MAX_MULTIPLIER_PER_HUMAN"] = 2;	// any, 0 - no limit
 
+//ссылка на тред
+$GLOBALS["2CH_THREAD_LINK"] = 'https://2ch.hk/cc/res/583746.html';
 
 
 //////////////////////КОНЕЦ НАСТРОЕК, НИЖЕ ПОДСЧЕТ////////////////////////////////
@@ -80,8 +85,13 @@ $GLOBALS["PAYOUT_MAX_MULTIPLIER_PER_HUMAN"] = 2;	// any, 0 - no limit
 
 //////////////////////////////////////////////////////////////////////////////
 ///// Подсчет, не конфигурировать ///////////////////////////////////////////
+$payout_course_multiplier = round($GLOBALS['PAYOUT_COURSE_MIN'] / $GLOBALS['PAYOUT_COURSE_NOW'],4);
+
 $GLOBALS["RPC_URL"] = 	'http://'.$GLOBALS["RPC_CONNECT_NAME"].':'.$GLOBALS["RPC_CONNECT_PASSWORD"].
 						'@'.$GLOBALS["RPC_CONNECT_IP"].':'.$GLOBALS["RPC_CONNECT_PORT"];
+
+//$all_max с учетом всех бонусов
+//$all_max_without_captcha_online без капчи и без онлайна
 
 $all_min = $GLOBALS["PAYOUT_MIN"] * $GLOBALS["PAYOUT_MULTICAST_MIN"];
 
@@ -92,8 +102,13 @@ $all_max *= ( 1 + GetMaxAllCaptchaCount() * $GLOBALS["PAYOUT_ONE_CAPTCHA_MULTIPL
 
 $all_max *= 1 + $GLOBALS["PAYOUT_CAPTCHA_PLACE_MULTIPLIER_MAX"];
 
+$all_max *= $payout_course_multiplier;
+
+
+
+$GLOBALS["PAYOUT_LIMIT"] = $GLOBALS["PAYOUT_LIMIT"] * $payout_course_multiplier;
 // Когда выплачивать (выигрыш)
-$GLOBALS["PAYOUT_AUTOPAY_LIMIT_MIN"] = ( $all_max_without_captcha_online * $GLOBALS["PAYOUT_WIN_LIMIT"] ) / $GLOBALS["PAYOUT_AMOUNT_MULTIPLIER"];			// считается выигрышем после этого значения (в йентенах)
+$GLOBALS["PAYOUT_AUTOPAY_LIMIT_MIN"] = ( $all_max_without_captcha_online * $GLOBALS["PAYOUT_WIN_LIMIT"] * $payout_course_multiplier ) / $GLOBALS["PAYOUT_AMOUNT_MULTIPLIER"];			// считается выигрышем после этого значения (в йентенах)
 
 ///////////////////////////////////////////////////////////////////////////////
 
