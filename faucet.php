@@ -149,7 +149,7 @@ if ($captcha_success->success==false) {
 							$data['success'] = true;
 							$data['boa'] = '<h4 id="alert_capcher_name">'.GetCapcherName( $username_id,$db )."</h4>";
 							$data['boa'] .= '<h3>';
-							$data['boa'] .= 'Вы получили <a href="http://2ch-yenten-faucet.ml/#">' . 
+							$data['boa'] .= 'Вы получили <a href="http://yenten.top/#">' . 
 											round($payout_yentens,4) . 
 											"</a> енотов!<br>" .
 											"Выпало: " . $roll . "<br>" . 
@@ -178,7 +178,7 @@ if ($captcha_success->success==false) {
 								if ($AddOrPayResults['Sended']==0){
 									$data['boa'] .= "<h6>Отправлено в накопления.<br>" .
 												"Накоплено: <a 
-												title=\"Накопления будут отправлены при достижении в ".$GLOBALS["PAYOUT_LIMIT"]." енотов или при выигрыше.\" href=\"http://2ch-yenten-faucet.ml/#\">" . 
+												title=\"Автовывод накоплений при достижении в ".$GLOBALS["PAYOUT_LIMIT"]." енотов или при выигрыше.\" href=\"http://yenten.top/#\">" . 
 												round($AddOrPayResults['SumAmount'],2) . 
 												"</a> енотов</h6><br>";
 									
@@ -236,7 +236,7 @@ if ($captcha_success->success==false) {
 						        				" transaction: " . $transucktion_id . "\n" );
 						        		}
 						        	} else {	//если транзакция зафейлилась
-						        		$data['boa'] .= "<h4 style='width: 350px;'>Будет выплачено <a href=\"http://2ch-yenten-faucet.ml/#\">" . round($AddOrPayResults['SumAmount'],2) . "</a> енотов в ручном режиме.</h4><br><h6>Не удалось провести транзакцию.</h6><br>";
+						        		$data['boa'] .= "<h4 style='width: 350px;'>Будет выплачено <a href=\"http://yenten.top/#\">" . round($AddOrPayResults['SumAmount'],2) . "</a> енотов в ручном режиме.</h4><br><h6>Не удалось провести транзакцию.</h6><br>";
 										$errors['transaction'] = 'Не удалось провести транзакцию.';
 										$data['errors'] = true;
 										$data['errors']  = $errors;

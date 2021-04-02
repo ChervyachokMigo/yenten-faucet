@@ -3,9 +3,9 @@
   color: #00a2e8 !important;
 }
 @media screen and (min-width: 768px){
-.jumbotron .h1, .jumbotron h1 {
-  font-size: 30px !important;
-}
+  .jumbotron .h1, .jumbotron h1 {
+    font-size: 30px !important;
+  }
 }
 h1, site_title>a{
 font-size: 30px !important;
@@ -190,7 +190,7 @@ a.list-group-item:focus, a.list-group-item:hover, button.list-group-item:focus, 
 }
 .headcontainer1 {
   margin:auto;
-  width:890px;
+  width:max-content;
 }
 .site_title {
 	text-shadow: 0px 0px 2px rgba(200,100,0,.6);
@@ -263,22 +263,6 @@ border-bottom-color: rgba(0,0,0,.04);
 }
 .list-group-item:last-child{
 border-radius: 0 !important;
-}
-@media screen and (max-width: 768px) {
-.top_capchers{
-  top:110px;
-}
-.container .jumbotron{
-  margin-top:40px;
-}
-}
-@media screen and (min-width: 769px) {
-.top_capchers{
-  top:60px;
-}
-.container .jumbotron{
-  margin-top:0px;
-}
 }
 
 @keyframes bgrandom {
@@ -404,16 +388,7 @@ textarea.win_comment{
   border-width: thin;
   border-bottom-color: rgba(0,0,0,.04);
 }
-@media screen and (max-width: 768px) {
-  .winners{
-    top:110px;
-  }
-}
-@media screen and (min-width: 769px) {
-  .winners{
-    top:60px;
-  }
-}
+
 .winners_name {
   text-shadow: 0px 0px 1px rgba(0,0,0,.7);
   display: inline-block;
@@ -450,4 +425,33 @@ textarea.win_comment{
 .tooltip-inner{
   width: 300px !important;
   max-width: 300px !important;
+}
+
+@media screen and (max-width: 768px) {
+  .top_capchers{
+    top:110px;
+  }
+  .winners_btn{
+    top:154px;
+  }
+  .container .jumbotron{
+    margin-top:40px;
+  }
+  .winners{
+    top:110px;
+  }
+}
+@media screen and (min-width: 769px) {
+  .top_capchers{
+    top:60px;
+  }
+  .winners_btn{
+    top:104px;
+  }
+  .container .jumbotron{
+    margin-top:0px;
+  }
+    .winners{
+    top:60px;
+  }
 }
